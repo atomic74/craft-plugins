@@ -26,7 +26,7 @@ class PaypalStandardPaymentsPlugin extends BasePlugin
 
   public function getDocumentationUrl()
   {
-    return "http://topshelfcraft.com/calendars";
+    return "https://github.com/ohlincik/craft-plugins/tree/master/paypal-standard-payments";
   }
 
   protected function defineSettings()
