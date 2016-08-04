@@ -1,0 +1,34 @@
+{#
+  {% include "partials/blocks/custom-form-fields/textbox" with {
+    inputName: 'input_name',
+    required: true,
+    label: 'Input Name',
+    placeholder: '',
+    helpBlock: ''
+  } only %}
+#}
+<div class="form-group">
+  <label class="control-label" for="fields_{{ inputName }}">
+    {% if required %}
+      <span class="text-danger"><strong>*</strong></span>
+    {% endif %}
+    {{ label }}
+  </label>
+  <div class="input">
+    <input type="hidden" name="fields[{{ inputName }}][label]" value="{{ label }}">
+    <input
+      class="form-control"
+      type="text"
+      id="fields_{{ inputName }}"
+      name="fields[{{ inputName }}][value]"
+      placeholder="{{ placeholder | default('') }}"
+      {% if required %}
+        data-fv-notempty="true"
+        data-fv-notempty-message="This field cannot be empty."
+      {% endif %}
+    >
+    {% if helpBlock is defined and helpBlock is not empty %}
+      <span class="help-block">{{ helpBlock }}</span>
+    {% endif %}
+  </div>
+</div>

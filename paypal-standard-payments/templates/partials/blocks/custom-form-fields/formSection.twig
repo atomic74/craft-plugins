@@ -1,0 +1,8 @@
+{#
+  {% include "partials/blocks/custom-form-fields/formSection" with {
+    sectionTitle: 'title'
+  } only %}
+#}
+{% set inputName = sectionTitle | replace(' ', '_') | lower %}
+<input type="hidden" name="fields[{{ inputName }}][label]" value="{{ sectionTitle }}">
+<input type="hidden" name="fields[{{ inputName }}][value]" value="__section__">

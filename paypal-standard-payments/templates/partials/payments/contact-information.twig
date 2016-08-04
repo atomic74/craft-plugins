@@ -1,0 +1,83 @@
+{% include "partials/blocks/custom-form-fields/formSection" with {
+  sectionTitle: 'Contact Information'
+} only %}
+
+<div class="row">
+  <div class="col-xs-12 col-sm-6">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'first_name',
+      required: true,
+      label: 'First Name',
+    } only %}
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'last_name',
+      required: true,
+      label: 'Last Name'
+    } only %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'business',
+      required: false,
+      label: 'Business'
+    } only %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'street',
+      required: true,
+      label: 'Street'
+    } only %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-4">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'city',
+      required: true,
+      label: 'City'
+    } only %}
+  </div>
+  <div class="col-xs-12 col-sm-4">
+    {% include "partials/blocks/custom-form-fields/dropdownUsStates" with {
+      inputName: 'state',
+      required: true,
+      label: 'State',
+      promptOption: 'Select a State...'
+    } only %}
+  </div>
+  <div class="col-xs-12 col-sm-4">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'zip',
+      required: true,
+      label: 'Zip'
+    } only %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-6">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'home_phone',
+      required: true,
+      label: 'Home Phone'
+    } only %}
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    {% include "partials/blocks/custom-form-fields/textbox" with {
+      inputName: 'email',
+      required: true,
+      label: 'Email Address',
+      helpBlock: 'Email will be used to confirm reservation'
+    } only %}
+  </div>
+</div>

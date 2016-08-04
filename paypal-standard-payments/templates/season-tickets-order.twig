@@ -1,0 +1,291 @@
+{# Season Tickets Order template #}
+
+{% extends "_layouts/base" %}
+{% set uri = 'season-tickets-order' %}
+
+{% block content %}
+  <div class="container page">
+    <div class="row">
+      <div class="col-md-9 col-md-offset-3 content">
+        <ul class="crumbs">
+          <li><a href="/">Home</a>&nbsp;&bull;&nbsp;</li>
+          <li><a href="/shows-events/">Shows & Events</a>&nbsp;&bull;&nbsp;</li>
+          <li>Season Tickets</li>
+        </ul><br/>
+        <h1>Season Tickets</h1>
+        {% if entry.mainContent %}
+          {% for matrixBlock in entry.mainContent %}
+            {% set include_type = 'partials/blocks/main-content/' ~ matrixBlock.type %}
+            {% include include_type %}
+          {% endfor %}
+        {% endif %}
+
+        <hr>
+
+        <h2>Order Online</h2>
+        <p>Fields marked with <span class="text-danger"><strong>*</strong></span> are required.</p>
+
+        {# Display an alert when in TEST mode for the Paypal Standard Payments Plugin #}
+        {{ craft.paypalStandardPayments.sandboxAlert() }}
+
+        {# Generate the form tag with all hidden input setup fields #}
+        {{ craft.paypalStandardPayments.formTagWithHiddenFields({
+          'formHandle': 'tickets-order',
+          'paymentEmail': paypalStandardPayments.paymentEmail,
+          'paymentType': '_xclick',
+          'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
+          'notificationSubject': 'Season Tickets Order',
+          'returnUrl': paypalStandardPayments.paymentReturnUrl.first().url,
+          'cancelUrl': paypalStandardPayments.paymentCancelUrl.first().url,
+          'offlineUrl': paypalStandardPayments.offlinePaymentUrl.first().url
+        }) }}
+
+          <h3>Your Contact Information</h3>
+
+          {% include 'partials/payments/contact-information' %}
+
+          <hr>
+
+          <div class="row">
+            <div class="col-xs-12">
+              {% include "partials/blocks/custom-form-fields/radioButtons" with {
+                inputName: 'renewing_subscription',
+                required: false,
+                label: 'Are you renewing your Erie Playhouse subscription from last season?',
+                options: [
+                  {label: 'Yes'},
+                  {label: 'No'}
+                ]
+              } only %}
+            </div>
+          </div>
+
+          <hr>
+
+          <h3>Season Ticket Preferences</h3>
+
+          {% include "partials/blocks/custom-form-fields/formSection" with {
+            sectionTitle: 'Season Ticket Preferences'
+          } only %}
+
+          <p>All ticket prices include a 3% city amusement tax</p>
+
+          {% include 'partials/payments/season-ticket-options' %}
+
+          {% if entry.seatingPreferenceOptions | length %}
+
+            <hr>
+
+            <h3>Seating Preferences</h3>
+
+            <h4>Traditional seating</h4>
+
+            <p>Gives you the same reserved seat for each production on your season ticket. Not available for Youtheatre season. Only available at start of season.</p>
+
+            <h4>Open Card Seating</h4>
+
+            <p>Flexible performance and seating choice. Open Card members may reserve best available seats before the Box Office opens to the general public. Only available at start of season.</p>
+
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="form-group">
+                  <label class="control-label" for="fields_seating_preferences">
+                    <span class="text-danger"><strong>*</strong></span>
+                    Seating Preference
+                  </label>
+                  <div class="input">
+                    <input type="hidden" name="fields[seating_preferences][label]" value="Seating Preference">
+                    <select
+                      class="form-control"
+                      id="fields_seating_preferences"
+                      name="fields[seating_preferences][value]"
+                      data-fv-notempty="true"
+                      data-fv-notempty-message="Please select an option above."
+                    >
+                      <option value="">Select one...</option>
+                      {% for option in entry.seatingPreferenceOptions %}
+                        <option>{{ option.seatingOption }}</option>
+                      {% endfor %}
+                    </select>
+                    {% if entry.seatingPreferenceNotes %}
+                      <p class="help-block">{{ entry.seatingPreferenceNotes }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-12">
+                {% include "partials/blocks/custom-form-fields/dropdown" with {
+                  inputName: 'day_preference',
+                  required: true,
+                  label: 'Day Preference',
+                  promptOption: 'Please select an option above...',
+                  options: [
+                    {label: 'Week 1 - Thursday'},
+                    {label: 'Week 1 - Friday'},
+                    {label: 'Week 1 - Saturday'},
+                    {label: 'Week 1 - Sunday'},
+                    {label: 'Week 2 - Wednesday'},
+                    {label: 'Week 2 - Thursday'},
+                    {label: 'Week 2 - Friday'},
+                    {label: 'Week 2 - Saturday'},
+                    {label: 'Week 2 - Sunday'},
+                  ]
+                } only %}
+              </div>
+            </div>
+          {% endif %}
+
+          <hr>
+
+          <h3>Order Details</h3>
+
+          <div class="order-details">
+
+            <hr>
+
+            <div class="row order-subtotal">
+              <div class="col-xs-8">
+                <strong>Subtotal</strong>
+              </div>
+              <div class="col-xs-4 payment-subtotal">
+                <input type="hidden" name="amounts[subtotal][label]" value="Subtotal">
+                <input type="hidden" name="amounts[subtotal][value]" class="payment-subtotal-amount" value="0.00">
+                <strong>$<span id="payment-subtotal">0.00</span></strong>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="row tax-deductible-contribution">
+              <div class="col-sm-9">
+                <p>
+                  <strong>Tax Deductible Contribution</strong><br>
+                  As ticket prices do not cover the Playhouse's operating expenses, please consider helping us by including a contribution, which is tax deductible. Thank you!
+                </p>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <div class="input">
+                    <input type="hidden" name="amounts[tax_deductible_contribution][label]" value="Tax Deductible Contribution">
+                    $
+                    <input
+                      class="form-control contribution-input"
+                      type="text"
+                      id="amounts_tax_deductible_contribution"
+                      name="amounts[tax_deductible_contribution][value]"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+              <div class="col-xs-8">
+                <strong>Handling Charge</strong>
+              </div>
+              <div class="col-xs-4 handling-charge">
+                <input type="hidden" name="amounts[handling_charge][label]" value="Handling Charge">
+                <input type="hidden" name="amounts[handling_charge][value]" value="3">
+                <strong>$3.00</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-total">
+            <input type="hidden" name="amounts[payment_total][label]" value="Payment Total">
+            <input type="hidden" name="amounts[payment_total][value]" class="payment-total-amount" value="0">
+            <h5 class="amount">
+              $<span id="payment-total">0.00</span>
+            </h5>
+            <h5>Order Total:</h5>
+          </div>
+
+          <h3>Payment Options</h3>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="form-group">
+                <div class="input">
+                  <input type="hidden" name="fields[payment_options][label]" value="Payment Option">
+                  <select
+                    class="form-control"
+                    id="fields_payment_options"
+                    name="fields[payment_options][value]"
+                    data-fv-notempty="true"
+                    data-fv-notempty-message="Please select an option above."
+                  >
+                    <option value="">Select one...</option>
+                    <option>Credit Card</option>
+                    <option>Check</option>
+                    <option>Deferred billing (not available w/ Choice Card orders)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <h3>Comments</h3>
+
+          <p>Please feel free to include anything else we might need to know regarding your order.</p>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="form-group">
+                <div class="input">
+                  <input type="hidden" name="fields[comments][label]" value="Comments">
+                  <textarea
+                    class="form-control"
+                    id="fields_comments"
+                    name="fields[comments][value]"
+                    rows="5"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            <em>Tickets may be exchanged within the run of a production (for any other performance of the same show) prior to the date of your original ticket. Cash refunds or refund vouchers are not available.</em>
+          </p>
+
+          <p>
+            <em>ALL SALES FINAL. NO REFUNDS. SINGLE, NON-SUBSCRIPTION PRICING SUBJECT TO CHANGE WITHOUT NOTICE. GIFT CERTIFICATES ARE AVAILABLE.</em>
+          </p>
+
+          <br>
+
+          <div id="validation-error" class="alert alert-danger" role="alert" style="display:none">
+            Please correct the errors above before submitting your order.
+          </div>
+
+          <div class="submit">
+            <button class="submit btn green">Submit your order</button>
+          </div>
+
+        </form>
+
+        <div id="processing-submission" style="display:none;margin:100px auto;text-align:center;">
+          <p><img src="http://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
+          <p>Processing your form submission, please wait...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{# ================= Include the form validation code =================== #}
+
+{% includeCssFile '/css/formValidation.min.css' %}
+{% includeJsFile '/js/formValidation.min.js' %}
+{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
+{% includeJsFile '/js/validate-and-process-season-tickets-order.js' %}
+
+{# ================= Include the form calculation code =================== #}
+{% includeJsFile '/js/calculate-season-tickets-order.js' %}

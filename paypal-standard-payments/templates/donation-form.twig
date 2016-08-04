@@ -1,0 +1,235 @@
+{# Donation Form template #}
+
+{% extends "_layouts/base" %}
+{% set uri = 'donation-form' %}
+
+{% block content %}
+  <div class="container page">
+    <div class="row">
+      <div class="col-md-9 col-md-offset-3 content">
+        <ul class="crumbs">
+          <li><a href="/">Home</a>&nbsp;&bull;&nbsp;</li>
+          <li><a href="/donate/">Donate</a>&nbsp;&bull;&nbsp;</li>
+          <li>Make a Donation</li>
+        </ul><br/>
+        <h1>Make a Donation</h1>
+
+        {% if craft.request.getParam('result') == '✓' %}
+          {# Display the Success Content #}
+          {{ entry.successContent }}
+        {% elseif craft.request.getParam('result') == 'x' %}
+          {# Display the Failed Content #}
+          {{ entry.failedContent }}
+        {% elseif craft.request.getParam('result') == 'c' %}
+          {# Display the By Check Content #}
+          {{ entry.byCheckContent }}
+        {% else %}
+          {# Display the Donation Form #}
+            <h2>Order Online</h2>
+            <p>Fields marked with <span class="text-danger"><strong>*</strong></span> are required.</p>
+
+            {# Display an alert when in TEST mode for the Paypal Standard Payments Plugin #}
+            {{ craft.paypalStandardPayments.sandboxAlert() }}
+
+            {# Generate the form tag with all hidden input setup fields #}
+            {{ craft.paypalStandardPayments.formTagWithHiddenFields({
+              'formHandle': 'donation-form',
+              'paymentEmail': paypalStandardPayments.paymentEmail,
+              'paymentType': '_donations',
+              'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
+              'notificationSubject': 'Online Donation',
+              'returnUrl': entry.url ~ '?result=✓',
+              'cancelUrl': entry.url ~ '?result=x',
+              'offlineUrl': entry.url ~ '?result=c'
+            }) }}
+
+              <h3>Your Contact Information</h3>
+
+              {% include 'partials/payments/contact-information' %}
+
+              {% include "partials/blocks/custom-form-fields/dropdown" with {
+                inputName: 'address_update',
+                required: false,
+                label: 'New Address, Business, Phone or Email?',
+                promptOption: 'Please select...',
+                options: [
+                  {label: 'Yes'},
+                  {label: 'No'}
+                ],
+                helpBlock: ''
+              } only %}
+
+              <div class="row">
+                <div class="col-xs-12">
+                  {% include "partials/blocks/custom-form-fields/radioButtons" with {
+                    inputName: 'benefits',
+                    required: true,
+                    label: 'Playhouse Circle Benefits',
+                    options: [
+                      {label: 'I would like to receive Playhouse Circle benefits'},
+                      {label: 'I would like to receive full income tax deduction in lieu of benefits'}
+                    ]
+                  } only %}
+                </div>
+              </div>
+
+              <hr>
+
+              <h3>Gifts</h3>
+
+              <br>
+
+              <div class="row">
+                <div class="col-sm-4">
+                  {% include "partials/payments/amount" with {
+                    inputName: 'total_gift',
+                    required: true,
+                    label: 'Total Gift',
+                    placeholder: '',
+                    helpBlock: ''
+                  } only %}
+                </div>
+                <div class="col-sm-4">
+                  {% include "partials/payments/amount" with {
+                    inputName: 'enclosed_gift',
+                    required: true,
+                    label: 'Enclosed Gift',
+                    placeholder: '',
+                    helpBlock: ''
+                  } only %}
+                </div>
+                <div class="col-sm-4">
+                  {% include "partials/payments/amount" with {
+                    inputName: 'balance_gift',
+                    required: true,
+                    label: 'Balance Gift',
+                    placeholder: '',
+                    helpBlock: ''
+                  } only %}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-12">
+                  {% include "partials/blocks/custom-form-fields/textbox" with {
+                    inputName: 'bill_me_for_balance',
+                    required: false,
+                    label: 'Please bill me for balance during month(s) of',
+                    placeholder: 'June, July, etc.',
+                    helpBlock: ''
+                  } only %}
+                </div>
+              </div>
+
+              <div class="order-total">
+                <h5 class="amount">
+                  $<span id="donation-total">0.00</span>
+                </h5>
+                <h5>Donation Total:</h5>
+              </div>
+
+              <hr>
+
+              {% include "partials/blocks/custom-form-fields/dropdown" with {
+                inputName: 'ge_employee',
+                required: true,
+                label: 'Are you a GE Employee or Retiree donating $25 or more?',
+                promptOption: 'Please select...',
+                options: [
+                  {label: 'Yes'},
+                  {label: 'No'}
+                ],
+                helpBlock: ''
+              } only %}
+
+              <h4>If you answered 'YES' above:</h4>
+
+              <p>Please make your check payable to the Erie Playhouse. GE will then match your amount providing additional funding for the Erie Playhouse. To report your gift of $25 or more, call the GE Matching Gifts Center, 1-800-305-0669. Your gift will need to be reported under the Erie Civic Theatre Association – Pennsylvania, and/or our Federal Tax ID# 25-1069-562.</p>
+              <p><strong>Questions?</strong> Call Carolin Lynn, 814/454-2852 x0.</p>
+
+              {% if entry.donationOptions | length %}
+
+                <hr>
+
+                <div class="row">
+                  <div class="col-xs-12">
+                    {% include "partials/blocks/custom-form-fields/checkboxes" with {
+                      inputName: 'donation_options',
+                      required: false,
+                      label: 'Options',
+                      options: entry.donationOptions
+                    } only %}
+                  </div>
+                </div>
+              {% endif %}
+
+              <hr>
+
+              <h3>Comments</h3>
+
+              <p>Please feel free to include anything else we might need to know regarding your donation.</p>
+
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="form-group">
+                    <div class="input">
+                      <input type="hidden" name="fields[comments][label]" value="Comments">
+                      <textarea
+                        class="form-control"
+                        id="fields_comments"
+                        name="fields[comments][value]"
+                        rows="5"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <hr>
+
+              <div class="row">
+                <div class="col-xs-12">
+                  {% include "partials/blocks/custom-form-fields/dropdown" with {
+                    inputName: 'payment_option',
+                    required: true,
+                    label: 'Payment Option',
+                    promptOption: 'Select payment method...',
+                    options: [
+                      {label: 'Credit Card'},
+                      {label: 'Check'}
+                    ]
+                  } only %}
+                </div>
+              </div>
+
+              <br>
+
+              <div id="validation-error" class="alert alert-danger" role="alert" style="display:none">
+                Please correct the errors above before submitting your order.
+              </div>
+
+              <div class="submit">
+                <button class="submit btn green">Submit your donation</button>
+              </div>
+
+            </form>
+
+            <div id="processing-submission" style="display:none;margin:100px auto;text-align:center;">
+              <p><img src="http://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
+              <p>Processing your form submission, please wait...</p>
+            </div>
+          </div>
+        {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{# ================= Include the form validation code =================== #}
+
+{% includeCssFile '/css/formValidation.min.css' %}
+{% includeJsFile '/js/formValidation.min.js' %}
+{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
+{% includeJsFile '/js/validate-and-process-donation-form.js' %}
+
+{# ================= Include the form calculation code =================== #}
+{% includeJsFile '/js/calculate-donation-form.js' %}

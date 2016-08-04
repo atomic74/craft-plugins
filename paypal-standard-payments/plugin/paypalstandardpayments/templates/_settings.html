@@ -1,43 +1,5 @@
 {% import "_includes/forms" as forms %}
 
-<h2>Testing Instructions</h2>
-
-<p>When in test mode, the plugin will automatically submit the payment to a <strong>Paypal Sandbox</strong> where you can run through the entire process of donating.</p>
-
-<p>Run through the following test scenarios:</p>
-<ol>
-  <li>Complete a successful payment.</li>
-  <li>Click the 'return to merchant' link before completing a donation to see the content for <em>Unsuccessful Payment</em></li>
-  <li>Review the payment email content.</li>
-</ol>
-
-<br>
-
-<table class="data fullwidth">
-  <tr>
-    <td style="padding:20px;vertical-align:top;">
-      <p>Use the following information to complete the test donation:</p>
-      <ul>
-        <li><strong>Email:</strong> test-buyer@thenewline.com</li>
-        <li><strong>Password:</strong> otE237Uc</li>
-        <li><strong>Card Number:</strong> 4032035110273471 (Visa)</li>
-        <li><strong>Exp. Date:</strong> 11/2019</li>
-        <li><strong>CVC:</strong> anything</li>
-      </ul>
-    </td>
-    <td style="padding:20px;vertical-align:top;">
-      <p>Use the following information to login into the Paypal Sandbox account to review the donation:</p>
-      <ul>
-        <li><strong>Login:</strong> <a href="https://www.sandbox.paypal.com" target="_blank">Payapal Sandbox</a></li>
-        <li><strong>Email:</strong> test-merchant@thenewline.com</li>
-        <li><strong>Password:</strong> N4dN23kT</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
-<hr>
-
 {{ forms.lightswitchField({
   label: "Test Mode"|t,
   id: 'testEnabled',

@@ -1,0 +1,65 @@
+{% if entry.seasonTicketOptions | length %}
+
+  {% for ticketOption in entry.seasonTicketOptions %}
+    {% set ticketOptionSlug = 'ticket_option_' ~ loop.index  %}
+    {% if ticketOption.childAndStudentPrice is empty %}
+      {% set ticketOptionLabel = 'All Ages &mdash; $' ~ ticketOption.adultPrice ~ ' each' %}
+      {% set ticketOptionEmailLabel = ticketOption.optionTitle ~ ' (All Ages @ $' ~ ticketOption.adultPrice ~ ')' %}
+    {% else %}
+      {% set ticketOptionLabel = 'Adult &mdash; $' ~ ticketOption.adultPrice ~ ' each' %}
+      {% set ticketOptionEmailLabel = ticketOption.optionTitle ~ ' (Adult @ $' ~ ticketOption.adultPrice ~ ')' %}
+    {% endif %}
+    <div class="row">
+      <div class="col-xs-12">
+        <h4>{{ ticketOption.optionTitle }}</h4>
+        <p>{{ ticketOption.description }}</p>
+        <div class="row">
+          <div class="col-sm-4">
+            <input type="hidden" id="fields_{{ ticketOptionSlug }}_adult_amount" name="fields[{{ ticketOptionSlug ~ '_adult' }}][label]" data-amount="{{ ticketOption.adultPrice }}" value="{{ ticketOptionEmailLabel }}">
+            <div class="form-group">
+              <label class="control-label" for="fields_{{ ticketOptionSlug }}">
+                {{ ticketOptionLabel | raw }}
+              </label>
+              <div class="input">
+                <select
+                  class="form-control fee-input"
+                  id="fields_{{ ticketOptionSlug }}_adult"
+                  name="fields[{{ ticketOptionSlug ~ '_adult' }}][value]"
+                >
+                  <option value="">Number of subscriptions...</option>
+                  {% for ticketNum in 1..10 %}
+                    <option value="{{ ticketNum }}">{{ ticketNum }} {{ loop.first ? 'subscription' : 'subscriptions' }} = ${{ ticketNum * ticketOption.adultPrice }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          {% if ticketOption.childAndStudentPrice is not empty %}
+            {% set ticketOptionLabel = 'Children and Full-time Students &mdash; $' ~ ticketOption.childAndStudentPrice ~ ' each' %}
+            {% set ticketOptionEmailLabel = ticketOption.optionTitle ~ ' (Children and Full-time Students @ $' ~ ticketOption.childAndStudentPrice ~ ')' %}
+            <div class="col-sm-8">
+              <input type="hidden" id="fields_{{ ticketOptionSlug }}_child_and_student_amount" name="fields[{{ ticketOptionSlug ~ '_child_and_student' }}][label]" data-amount="{{ ticketOption.childAndStudentPrice }}" value="{{ ticketOptionEmailLabel }}">
+              <div class="form-group">
+                <label class="control-label" for="fields_{{ ticketOptionSlug }}">
+                  {{ ticketOptionLabel | raw }}
+                </label>
+                <div class="input">
+                  <select
+                    class="form-control fee-input"
+                    id="fields_{{ ticketOptionSlug }}_child_and_student"
+                    name="fields[{{ ticketOptionSlug ~ '_child_and_student' }}][value]"
+                  >
+                    <option value="">Number of subscriptions...</option>
+                    {% for ticketNum in 1..10 %}
+                      <option value="{{ ticketNum }}">{{ ticketNum }} {{ loop.first ? 'subscription' : 'subscriptions' }} = ${{ ticketNum * ticketOption.childAndStudentPrice }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}

@@ -24,6 +24,9 @@ class PaypalStandardPaymentsVariable
     }
 
     // Provide default values if missing
+    if (!array_key_exists('formHandle', $options) || !$options['formHandle']) {
+      $options['formHandle'] = 'online-order';
+    }
     if (!array_key_exists('notificationRecipients', $options) || !$options['notificationRecipients']) {
       $options['notificationRecipients'] = $options['paymentEmail'];
     }

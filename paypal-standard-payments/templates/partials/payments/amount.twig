@@ -1,0 +1,36 @@
+{#
+  {% include "partials/payments/amount" with {
+    inputName: 'input_name',
+    required: true,
+    label: 'Input Name',
+    placeholder: '',
+    helpBlock: ''
+  } only %}
+#}
+<div class="form-group">
+  <label class="control-label" for="fields_{{ inputName }}">
+    {% if required %}
+      <span class="text-danger"><strong>*</strong></span>
+    {% endif %}
+    {{ label }}
+  </label>
+  <div class="input-group">
+    <input type="hidden" name="amounts[{{ inputName }}][label]" value="{{ label }}">
+    <input
+      class="form-control amount-input"
+      type="text"
+      id="amounts_{{ inputName }}"
+      name="amounts[{{ inputName }}][value]"
+      placeholder="{{ placeholder | default('$0.00') }}"
+      {% if required %}
+        data-fv-notempty="true"
+        data-fv-notempty-message="Please input an amount."
+        data-fv-numeric="true"
+        data-fv-numeric-message="Must be a number"
+      {% endif %}
+    >
+    {% if helpBlock is defined and helpBlock is not empty %}
+      <span class="help-block">{{ helpBlock }}</span>
+    {% endif %}
+  </div>
+</div>

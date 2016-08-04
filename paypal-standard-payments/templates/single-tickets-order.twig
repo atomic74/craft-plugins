@@ -1,0 +1,241 @@
+{# Single Tickets Order template #}
+
+{% extends "_layouts/base" %}
+{% set uri = 'single-tickets-order' %}
+{% set showId = craft.request.getQuery('show-id') %}
+{% set showEntry = craft.entries.id(showId).first() %}
+
+{# Redirect back to show page if Tickets ordering is disabled #}
+{% if not showEntry.ticketsAvailableForPurchase %}
+  {% redirect showEntry.url %}
+{% endif %}
+
+{% block content %}
+  <div class="container page">
+    <div class="row">
+      <div class="col-md-9 col-md-offset-3 content">
+        <ul class="crumbs">
+          <li><a href="/">Home</a>&nbsp;&bull;&nbsp;</li>
+          <li><a href="/shows-events/">Shows & Events</a>&nbsp;&bull;&nbsp;</li>
+          <li>{{ showEntry.getLink() }}&nbsp;&bull;&nbsp;</li>
+          <li>Tickets</li>
+        </ul><br/>
+        <h1>Tickets &mdash; {{ showEntry.title }}</h1>
+
+        {% if showEntry.premiereTicketsAvailableForPurchase %}
+          <div class="call-out-blue">
+            <h4>Premiere Tickets are available.</h4>
+            <a href="/premiere-tickets-order/?show-id={{ showId }}" class="btn orange">Premiere Options</a>
+          </div>
+        {% endif %}
+
+        <p>Fields marked with <span class="text-danger"><strong>*</strong></span> are required.</p>
+
+        {# Display an alert when in TEST mode for the Paypal Standard Payments Plugin #}
+        {{ craft.paypalStandardPayments.sandboxAlert() }}
+
+        {# Generate the form tag with all hidden input setup fields #}
+        {{ craft.paypalStandardPayments.formTagWithHiddenFields({
+          'formHandle': 'tickets-order',
+          'paymentEmail': paypalStandardPayments.paymentEmail,
+          'paymentType': '_xclick',
+          'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
+          'notificationSubject': 'Tickets Order - ' ~ showEntry.title,
+          'returnUrl': paypalStandardPayments.paymentReturnUrl.first().url,
+          'cancelUrl': paypalStandardPayments.paymentCancelUrl.first().url
+        }) }}
+
+          <h3>Your Contact Information</h3>
+
+          {% include 'partials/payments/contact-information' %}
+
+          {% if showEntry.ticketDayTimeOptions | length %}
+
+            <hr>
+
+            <h3>Date and Time</h3>
+
+            <p>Please select date and time for the show you'd like to attend.</p>
+
+            <div class="row">
+              <div class="col-xs-12">
+                <input type="hidden" name="fields[show_date_time][label]" value="Date and Time">
+                <div class="form-group">
+                  <label class="control-label" for="fields_show_date_time">
+                    <span class="text-danger"><strong>*</strong></span>
+                    Date and Time
+                  </label>
+                  <div class="input">
+                    <select
+                      class="form-control"
+                      id="fields_show_date_time"
+                      name="fields[show_date_time][value]"
+                      data-fv-notempty="true"
+                      data-fv-notempty-message="Please select an option above."
+                    >
+                      <option value="">Select date and time...</option>
+                      {% for option in showEntry.ticketDayTimeOptions %}
+                        {% set optionSlug = 'date_time_' ~ loop.index %}
+                        {% set optionValue = option.date | date('l, n/j') ~ ' @ ' ~ option.time %}
+                        {% set optionLabel = optionValue %}
+                        {% if option.soldOut %}
+                          {% set optionLabel =  '--- SOLD OUT: ' ~ optionLabel ~ ' ---'%}
+                        {% endif %}
+                        {% if option.notes is not empty %}
+                          {% set optionLabel = optionLabel ~ ' (' ~ option.notes ~ ')' %}
+                        {% endif %}
+                        <option value="{{ optionValue }}" {{ option.soldOut ? 'disabled' : '' }}>{{ optionLabel }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if showEntry.seatingPreferenceOptions | length %}
+
+            <hr>
+
+            <h3>Seating Preference</h3>
+
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="form-group">
+                  <label class="control-label" for="fields_seating_preferences">
+                    <span class="text-danger"><strong>*</strong></span>
+                    Please indicate in which section you would like to sit
+                  </label>
+                  <div class="input">
+                    <input type="hidden" name="fields[seating_preferences][label]" value="Seating Preference">
+                    <select
+                      class="form-control"
+                      id="fields_seating_preferences"
+                      name="fields[seating_preferences][value]"
+                      data-fv-notempty="true"
+                      data-fv-notempty-message="Please select an option above."
+                    >
+                      <option value="">Select an Option...</option>
+                      {% for option in showEntry.seatingPreferenceOptions %}
+                        <option>{{ option.seatingOption }}</option>
+                      {% endfor %}
+                    </select>
+                    {% if showEntry.seatingPreferenceNotes %}
+                      <p class="help-block">{{ showEntry.seatingPreferenceNotes }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <a href="/shows-events/seating-chart" class="btn green">View Seating Chart</a>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if showEntry.ticketOptions | length %}
+
+            <hr>
+
+            <h3>Tickets</h3>
+
+            <p>Online tickets orders are processed through Paypal and are to be picked up at the theatre box office. All ticket prices include facility upkeep fee, online service charge, and 3% city amusement tax. If you require more than 8 tickets, please contact the box office at 814.454.2852.</p>
+
+            {% for ticketOption in showEntry.ticketOptions %}
+              {% set ticketOptionSlug = ticketOption.type | replace(' ', '_') | lower %}
+              {% set ticketOptionLabel = ticketOption.label ~ ' &mdash; $' ~ ticketOption.price %}
+              <div class="row">
+                <div class="col-xs-12">
+                  <input type="hidden" id="fields_{{ ticketOptionSlug }}_amount" name="fields[{{ ticketOptionSlug }}][label]" data-amount="{{ ticketOption.price }}" value="{{ ticketOptionLabel | raw }}">
+                  <div class="form-group">
+                    <label class="control-label" for="fields_{{ ticketOptionSlug }}">
+                      <span class="text-danger"><strong>*</strong></span>
+                      {{ ticketOptionLabel | raw }}
+                    </label>
+                    <div class="input">
+                      <select
+                        class="form-control fee-input"
+                        id="fields_{{ ticketOptionSlug }}"
+                        name="fields[{{ ticketOptionSlug }}][value]"
+                      >
+                        <option value="">Select number of tickets...</option>
+                        {% for ticketNum in 1..(ticketOption.maxNumber) %}
+                          <option value="{{ ticketNum }}">{{ ticketNum }} {{ loop.first ? 'ticket' : 'tickets' }} = ${{ (ticketNum * ticketOption.price) | number_format(2) }}</option>
+                        {% endfor %}
+                      </select>
+                      {% if ticketOption.notes %}
+                        <p class="help-block">{{ ticketOption.notes }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <div class="order-total">
+            <input type="hidden" name="amounts[payment_total][label]" value="Payment Total">
+            <input type="hidden" name="amounts[payment_total][value]" class="payment-total-amount" value="0">
+            <h5 class="amount">
+              $<span id="payment-total">0.00</span>
+            </h5>
+            <h5>Order Total:</h5>
+          </div>
+
+          <hr>
+
+          <h3>Comments</h3>
+
+          <p>Please feel free to include anything else we might need to know regarding your order.</p>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="form-group">
+                <div class="input">
+                  <input type="hidden" name="fields[comments][label]" value="Comments">
+                  <textarea
+                    class="form-control"
+                    id="fields_comments"
+                    name="fields[comments][value]"
+                    rows="5"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            <em>Online ticket orders are processed through Paypal, but you need not have a Paypal Account. Tickets may be exchanged within the run of a production (for any other performance of the same show) prior to the date of your original ticket. Cash refunds or refund vouchers are not available.</em>
+          </p>
+
+          <p>
+            <em>ALL SALES FINAL. NO REFUNDS. SINGLE, NON-SUBSCRIPTION PRICING SUBJECT TO CHANGE WITHOUT NOTICE. GIFT CERTIFICATES ARE AVAILABLE.</em>
+          </p>
+
+          <br>
+
+          <div id="validation-error" class="alert alert-danger" role="alert" style="display:none">
+            Please correct the errors above before submitting your order.
+          </div>
+
+          <div class="submit">
+            <button class="submit btn green">Submit your order</button>
+          </div>
+
+        </form>
+
+        <div id="processing-submission" style="display:none;margin:100px auto;text-align:center;">
+          <p><img src="http://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
+          <p>Processing your form submission, please wait...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{# ================= Include the form validation code =================== #}
+
+{% includeCssFile '/css/formValidation.min.css' %}
+{% includeJsFile '/js/formValidation.min.js' %}
+{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
+{% includeJsFile '/js/validate-and-process-single-tickets-order.js' %}
+
+{# ================= Include the form calculation code =================== #}
+{% includeJsFile '/js/calculate-single-tickets-order.js' %}
