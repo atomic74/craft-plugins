@@ -96,7 +96,7 @@ class GrowDoughVariable
    *      }
    *    }
    *   ],
-   *   'paymentType': 'credit_card|giving_card'
+   *   'paymentMethod': 'credit_card|giving_card'
    * }) }}
    *
    * @return string Opening form tag with hidden fields.
@@ -113,18 +113,18 @@ class GrowDoughVariable
       $donationItems = json_encode($options['donationItems']);
     }
 
-    if (!array_key_exists('paymentType', $options) || !$options['paymentType']) {
-      $paymentType = "";
+    if (!array_key_exists('paymentMethod', $options) || !$options['paymentMethod']) {
+      $paymentMethod = "";
     }
     else {
-      $paymentType = "<input type=\"hidden\" id=\"growdough_payment_type\" name=\"payment_type\" value=\"".$options['paymentType']."\">";
+      $paymentMethod = "<input type=\"hidden\" id=\"growdough_payment_method\" name=\"payment_method\" value=\"".$options['paymentMethod']."\">";
     }
 
     $templateVariables = json_encode($options['templateVariables']);
 
     return TemplateHelper::getRaw('
 <form role="form" id="growdough-form" method="post" action="'.$this->donationsUrl().'" accept-charset="UTF-8">
-  '.$paymentType.'
+  '.$paymentMethod.'
   <input type="hidden" id="growdough_template_variables" name="template_variables" value="'.htmlspecialchars($templateVariables).'">
   <input type="hidden" id="growdough_donation_items" name="donation_items" value="'.htmlspecialchars($donationItems).'">');
   }

@@ -58,7 +58,7 @@ Opening form tag to submit donation to GrowDough. Includes the GrowDough post UR
 
  - **templateVariables** Include the template variables that should be used in the GrowDough donation workflow (donation form, email receipt, thank you page, etc.) _If not included, an empty JSON array will be submitted._
  - **donationItems** Include an array of donation items to override the items in the donation list. _If not included, an array of donation items will be automatically generated from the donation list._ 
- - **paymentType** Include a predefined payment type (**credit\_card** or **giving_card**) if the form is intended to use a pre-determined GrowDough donation form.
+ - **paymentMethod** Include a predefined payment method (**credit\_card** or **giving_card**) if the form is intended to use a pre-determined GrowDough donation form.
 
 #### Most Common Use
 
@@ -70,7 +70,7 @@ The form tag will be most commonly used with templateVariables and paymentType.
         'Variable Key': 'Variable Value',
         ...
       },
-      'paymentType': 'credit_card|giving_card'
+      'paymentMethod': 'credit_card|giving_card'
     }) }}
 
 #### Full Variable Syntax
@@ -99,7 +99,7 @@ The form tag will be most commonly used with templateVariables and paymentType.
           }
         }
       ],
-      'paymentType': 'credit_card|giving_card'
+      'paymentMethod': 'credit_card|giving_card'
     }) }}
 
 ### getDonationItemsJson
