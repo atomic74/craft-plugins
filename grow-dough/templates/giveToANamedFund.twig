@@ -1,0 +1,28 @@
+{% block content %}
+  {{ craft.growDough.formTag({
+    'templateVariables': {
+      'name': 'Named Fund',
+      'designation': 'Named Fund'
+    },
+    'donationItems': [
+      {
+        "title": "Named Fund",
+        "attributes": {
+          "Donation Type": "named-fund",
+          "Name": "Named Fund",
+          "Designation": "Named Fund"
+        }
+      }
+    ],
+    'paymentMethod': 'credit_card'
+  }) }}
+    <h3>Enter Name of Named Fund</h3>
+    <div class="form-group">
+      <input name="designation" type="text" class="form-control">
+    </div>
+    <p class="help-block" style="font-style:italic;margin-top:-5px;margin-bottom:15px;">If you don't know the exact name, just fill in what you know and we'll call you If we have questions.</p>
+    <button class="btn">Give Now</button>
+  </form>
+{% endblock %}
+
+{% includeJsFile '/js/growdough-named-fund.js' %}

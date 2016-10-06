@@ -1,0 +1,28 @@
+{% block content %}
+  <h2>Complete list of Scholarship Funds available for giving:</h2>
+  <ul style="margin-top:10px;">
+    {% for scholarship in scholarships %}
+      <li><a href="#" class="js-scholarship-name">{{ scholarship.title }}</a></li>
+    {% endfor %}
+  </ul>
+  {{ craft.growDough.formTag({
+    'templateVariables': {
+      'name': 'Scholarship Fund',
+      'designation': 'Named Fund'
+    },
+    'donationItems': [
+      {
+        "title": "Scholarship Fund",
+        "attributes": {
+          "Donation Type": "scholarship",
+          "Name": "Scholarship Fund",
+          "Designation": "Scholarship Fund"
+        }
+      }
+    ],
+    'paymentMethod': 'credit_card'
+  }) }}
+  </form>
+{% endblock %}
+
+{% includeJsFile '/js/growdough-scholarships.js' %}

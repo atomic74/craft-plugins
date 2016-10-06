@@ -1,0 +1,36 @@
+{{ craft.growDough.formTag({
+  'templateVariables': {
+    'name': entry.title,
+    'designation': 'Agency Fund'
+  },
+  'donationItems': [
+    {
+      "title": "Agency Fund",
+      "attributes": {
+        "Donation Type": "nonprofit",
+        "Name": entry.title,
+        "Designation": "Agency Fund"
+      }
+    }
+  ],
+  'paymentMethod': 'credit_card'
+}) }}
+  {% if entry.title != 'Erie Community Foundation'  %}
+    <h2>Give Now</h2>
+    <h3>Choose a Gift Option:</h3>
+    <div class="radio">
+      <label>
+        <input type="radio" checked="checked" name="designation" value="General Operating Expenses">General Operating Expenses<br>
+      </label>
+    </div>
+    <div class="divider"><hr/></div>
+  {% else %}
+    <div class="hidden">
+      <input type="radio" checked="checked" name="designation" value="Erie County's Most Pressing Needs">
+    </div>
+    <p style="margin-top:0;">Help us meet Erie County’s most pressing needs.</p>
+  {% endif %}
+  <button class="btn">Give Now</button>
+</form>
+
+{% includeJsFile '/js/growdough-donation-form.js' %}
