@@ -181,12 +181,18 @@ OR
 
 Remove a specific donation item from the **Donations List**. If an item with the provided _itemId_ does not exist in the list, the action will be ignored.
 
-    <a href="{{ actionUrl('growDough/removeDonationItem', { itemName: item.title }) }}">Remove</i>
+    <a href="{{ actionUrl('growDough/removeDonationItem', { itemId: itemId }) }}">Remove</i>
 
 _Optional:_ Add a **redirectUrl** parameter if you'd like to redirect to a specific page after the item is added. If the parameter is omitted, the browser will redirect to the origin page (using http_referrer).
 
-    <a href="{{ actionUrl('growDough/removeDonationItem', { itemName: item.title, redirectUrl: 'some/url/here' }) }}">Remove</i>
+    <a href="{{ actionUrl('growDough/removeDonationItem', { itemId: itemId, redirectUrl: 'some/url/here' }) }}">Remove</i>
 
+### removeAllDonationItems
 
+Remove all donation items from growDoughItems session variable. This is useful when checking out a multi-designation donation and the session needs to be remove so that it does not stick around after the donation is complete.
 
+This action needs to be called via AJAX while the GrowDough form is being submitted.
 
+    $.get('/actions/growDough/removeAllDonationItems', { deleteAll: true }, function(response) {
+      console.log('Deleted ' + response.item_count + ' donation items.');
+    });

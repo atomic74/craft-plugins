@@ -21,7 +21,7 @@ class GrowDoughController extends BaseController
   }
 
   /**
-   * Add remove item to growDoughItems session variable
+   * Remove donation item from growDoughItems session variable
    *
    * @return void
    **/
@@ -30,6 +30,22 @@ class GrowDoughController extends BaseController
     $itemId = craft()->request->getRequiredParam('itemId');
     craft()->growDough->removeDonationItem($itemId);
     $this->redirect($this->redirectUrl(craft()->request->getParam('redirectUrl')));
+  }
+
+  /**
+   * Remove all donation items from growDoughItems session variable
+   *
+   * Expects an AJAX request
+   *
+   * @return string JSON formatted string including the 'item_count' representing the number of deleted items
+   **/
+  public function actionRemoveAllDonationItems()
+  {
+    $this->requireAjaxRequest();
+    $removedDonationItemsCount = craft()->growDough->removeAllDonationItems();
+    $this->returnJson(array(
+      'item_count' => $removedDonationItemsCount
+    ));
   }
 
   /**

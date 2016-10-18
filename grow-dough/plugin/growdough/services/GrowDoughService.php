@@ -47,4 +47,16 @@ class GrowDoughService extends BaseApplicationComponent
     }
   }
 
+  /**
+   * Remove all donation items from the growDoughItems session variable by removing the session variable itself
+   *
+   * @return integer The number of deleted items
+   **/
+  public function removeAllDonationItems()
+  {
+    $donationItems = craft()->httpSession->get('growDoughItems', array());
+    $donationItemsCount = count($donationItems);
+    craft()->httpSession->remove('growDoughItems');
+    return $donationItemsCount;
+  }
 }
