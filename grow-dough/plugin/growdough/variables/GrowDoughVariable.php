@@ -176,4 +176,15 @@ class GrowDoughVariable
     return craft()->plugins->getPlugin('growDough')->getSettings()->growDoughDonationsUrl;
   }
 
+  /**
+   * Retrieve the GrowDough Giving Card purchase URL and provide to a template.
+   *
+   * @return string The GrowDough Giving Card purchase URL.
+   **/
+  public function givingCardPurchaseUrl()
+  {
+    $donationsUrl = craft()->plugins->getPlugin('growDough')->getSettings()->growDoughDonationsUrl;
+    return str_replace('donate', 'giving_cards', $donationsUrl);
+  }
+
 }

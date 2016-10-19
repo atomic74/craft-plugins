@@ -114,6 +114,12 @@ Retrieves the GrowDough donations URL from the plugin settings. The URL is used 
 
     <form action="{{ craft.growDough.donationsUrl }}" method="post">
 
+### givingCardPurchaseUrl
+
+Retrieves the GrowDough Giving Card purchase URL from the plugin settings. The URL is used to post the desired Giving Card amount to the GrowDough system for the particular account.
+
+    <form action="{{ craft.growDough.givingCardPurchaseUrl }}" method="post">
+
 ## Actions
 
 ### addDonationItem
