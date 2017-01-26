@@ -12,11 +12,13 @@
     Refresh your Craft CMS knowledge with a personalized training review playlist.
   </p>
 {% endif %}
-<hr>
-<h2>Notes from Tungsten</h2>
-<div class="tcg-notes">
-  {{ settings.tcgNotes | markdown }}
-</div>
+{% if settings.tcgNotes is not empty %}
+  <hr>
+  <h2>Notes from Tungsten</h2>
+  <div class="tcg-notes">
+    {{ settings.tcgNotes | markdown }}
+  </div>
+{% endif %}
 
 <style type="text/css">
   .tcg-notes h3 {
