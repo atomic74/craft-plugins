@@ -23,6 +23,11 @@ class TungstenPlugin extends BasePlugin
     return 'http://atomic74.com';
   }
 
+  public function getReleaseFeedUrl()
+  {
+    return 'https://tcg-craft.s3.amazonaws.com/plugins/tungsten/releases.json';
+  }
+
   protected function defineSettings()
   {
     return array(
