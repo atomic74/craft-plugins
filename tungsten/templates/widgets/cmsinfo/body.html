@@ -1,8 +1,4 @@
 <p>
-  Version 1.4.1
-</p>
-<hr>
-<p>
   <strong><a href="https://thenewline.zendesk.com/hc/en-us/requests/new" target="_blank">Submit Support Ticket</a></strong><br>
   Ask us a question about your website or the CMS.
 </p>
@@ -10,3 +6,26 @@
   <strong><a href="https://my.thenewline.com" target="_blank">My Newline</a></strong><br>
   View your billing details, manage your organization contacts and mailboxes.
 </p>
+{% if settings.tcgTrainingVideosUrl is not empty %}
+  <p>
+    <strong><a href="{{ settings.tcgTrainingVideosUrl }}" target="_blank">Tranining Videos</a></strong><br>
+    Refresh your Craft CMS knowledge with a personalized training review playlist.
+  </p>
+{% endif %}
+<hr>
+<h2>Notes from Tungsten</h2>
+<div class="tcg-notes">
+  {{ settings.tcgNotes | markdown }}
+</div>
+
+<style type="text/css">
+  .tcg-notes h3 {
+    border-bottom: solid 1px rgba(251, 176, 52, .5);
+    padding-bottom: .3em;
+    margin: 1.7em 0 .5em;
+  }
+  .tcg-notes ul {
+    list-style: outside;
+    margin-left: 1em;
+  }
+</style>

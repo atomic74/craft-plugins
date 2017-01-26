@@ -1,0 +1,28 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+  label: "Traning Videos URL"|t,
+  id: 'tcgTrainingVideosUrl',
+  name: 'tcgTrainingVideosUrl',
+  instructions: 'Provide the YouTube video playlist URL. Leave blank to hide the link on Dashboard.',
+  value: (settings.tcgTrainingVideosUrl is defined) ? settings.tcgTrainingVideosUrl : '',
+  errors: (settings.tcgTrainingVideosUrl is defined) ? settings.getErrors('tcgTrainingVideosUrl') : ''
+}) }}
+
+<hr>
+
+{{ forms.textareaField({
+  label: "Notes from Tungsten"|t,
+  id: 'tcgNotes',
+  class: 'tcg-notes redactor',
+  name: 'tcgNotes',
+  instructions: 'Input the system-wide notes here. You can use [markdown](http://daringfireball.net/projects/markdown/basics) for formatting purposes.',
+  value: (settings.tcgNotes is defined) ? settings.tcgNotes : '',
+  errors: (settings.tcgNotes is defined) ? settings.getErrors('tcgNotes') : ''
+}) }}
+
+<style type="text/css">
+  textarea.text.tcg-notes {
+    min-height: 300px;
+  }
+</style>
