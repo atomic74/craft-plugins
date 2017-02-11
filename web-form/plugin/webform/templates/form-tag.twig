@@ -1,0 +1,14 @@
+{% if captchaEnabled %}
+<form role="form" id="submission-form" method="post" action="" accept-charset="UTF-8"
+  data-fv-addons="reCaptcha2"
+  data-fv-addons-recaptcha2-element="captchaContainer"
+  data-fv-addons-recaptcha2-language="{{ captchaLanguage }}"
+  data-fv-addons-recaptcha2-theme="{{ captchaTheme }}"
+  data-fv-addons-recaptcha2-sitekey="{{ captchaSiteKey }}"
+  data-fv-addons-recaptcha2-timeout="{{ captchaTimeout }}"
+  data-fv-addons-recaptcha2-message="{{ captchaMessage }}">
+{% else %}
+<form role="form" id="submission-form" method="post" action="" accept-charset="UTF-8">
+{% endif %}
+  <input type="hidden" name="action" value="webForm/sendNotification">
+  <input type="hidden" name="entry_id" value="{{ entryId }}">

@@ -1,0 +1,32 @@
+<div class="form-group">
+  <label class="control-label" for="fields_{{ matrixBlock.inputName }}">
+    {% if matrixBlock.required %}
+      <span class="text-danger"><strong>*</strong></span>
+    {% endif %}
+    {{ matrixBlock.label }}
+  </label>
+  <div class="input">
+    <input type="hidden" name="fields[{{ matrixBlock.inputName }}][label]" value="{{ matrixBlock.label }}">
+    <select
+      class="form-control"
+      id="fields_{{ matrixBlock.inputName }}"
+      name="fields[{{ matrixBlock.inputName }}][value]"
+      {% if matrixBlock.required %}
+        data-fv-notempty="true"
+        data-fv-notempty-message="Please select an option above."
+      {% endif %}
+    >
+      {% if matrixBlock.required %}
+        <option value="">{{ matrixBlock.promptOption | default('Please select one...') }}</option>
+      {% elseif matrixBlock.promptOption is not empty %}
+        <option value="-- n/a --">{{ matrixBlock.promptOption }}</option>
+      {% endif %}
+      {% for option in matrixBlock.options %}
+        <option value="{{ option.value | default(option.label) }}">{{ option.label }}</option>
+      {% endfor %}
+    </select>
+    {% if matrixBlock.helpBlock is not empty %}
+      <span class="help-block">{{ matrixBlock.helpBlock }}</span>
+    {% endif %}
+  </div>
+</div>

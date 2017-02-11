@@ -13,3 +13,5 @@
 [Documentation](https://github.com/ohlincik/craft-plugins/tree/master/paypal-standard-payments)
 
 ## Web Form
+
+[Documentation](https://github.com/ohlincik/craft-plugins/tree/master/web-form)

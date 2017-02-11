@@ -1,0 +1,24 @@
+{# Import the form helper macros #}
+{% import 'partials/macros/form-helpers' as fh %}
+
+{% embed 'email/_base' %}
+
+  {% block subject %}
+    {{ subject }}
+  {% endblock %}
+
+  {% block body %}
+    {% for field in fields %}
+      {% if field.value is defined and field.value == "__section__" %}
+        <p>&nbsp;</p>
+        <h2>{{ fh.formFieldLabel(field) }}</h2>
+      {% else %}
+        <p>
+          <strong>{{ fh.formFieldLabel(field) }}:</strong>
+          {{ fh.formFieldValue(field) }}
+        </p>
+      {% endif %}
+    {% endfor %}
+  {% endblock %}
+
+{% endembed %}

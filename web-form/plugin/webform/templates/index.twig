@@ -1,0 +1,57 @@
+{% extends '_layouts/cp' %}
+
+{% set title = 'Web Forms' %}
+
+{% set webForms = craft.webForm.getWebForms %}
+
+{% block content %}
+
+  {% if webForms %}
+    <p style="text-align:right">
+      <a class="btn submit" href="{{ actionUrl('webForm/deleteAll') }}">Delete All</a>
+    </p>
+    <table class="data fullwidth">
+      <thead>
+        <tr>
+          <th>Form Handle</th>
+          <th>Form Subject</th>
+          <th>Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for webForm in webForms %}
+            <tr>
+              <td>
+                <a href="{{ url('webform/detail', { formId: webForm.id }) }}">
+                  {{ webForm.handle }}
+                </a>
+              </td>
+              <td>
+                {{ webForm.subject }}
+              </td>
+              <td>
+                {{ webForm.dateCreated | date('m/d/Y - G:i') }}
+              </td>
+              <td>
+                <a href="{{ actionUrl('webForm/delete', { formId: webForm.id }) }}" class="delete icon"></a>
+              </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+      There are no form entries
+  {% endif %}
+
+{% endblock %}
+
+{% set myJs %}
+$('a.submit').click(function() {
+  return confirm('Are you sure you want to delete ALL form entries?');
+});
+$('a.delete').click(function() {
+  return confirm('Are you sure you want to delete this form entry?');
+});
+{% endset %}
+
+{% includeJs myJs %}

@@ -1,0 +1,54 @@
+{% extends '_layouts/cp' %}
+
+{% set webForm = craft.webForm.getWebForm %}
+
+{% set crumbs = [
+  { 'label': 'Web Form', 'url': url('webform') }
+] %}
+
+{% set title = 'Web Forms' %}
+
+{% block main %}
+  <div class="grid first">
+    <div class="item" data-position="left" data-min-colspan="2" data-max-colspan="3">
+      <div id="fields" class="pane">
+        <iframe src="{{ url('webform/content', { formId: webForm.id }) }}" frameborder="0" width="100%" height="500"></iframe>
+      </div>
+    </div>
+    <div class="item" data-position="right" data-colspan="1">
+      <div class="pane">
+        <p>
+          Form Handle<br>
+          <strong>{{ webForm.handle }}</strong>
+        </p>
+        <p>
+          Form Subject<br>
+          <strong>{{ webForm.subject }}</strong>
+        </p>
+        <p>
+          Submitted on<br>
+          <strong>{{ webForm.dateCreated | date('m/d/Y - G:i') }}</strong>
+        </p>
+        <p>
+          Submitted to<br>
+          <strong>{{ webForm.recipients | replace({ ',': '<br>' }) | raw }}</strong>
+        </p>
+
+        <div class="field" id="enabled-field">
+          <div class="input">
+            <div class="right">
+              <form action="" method="get">
+                <input type="hidden" name="formId" value="{{ webForm.id }}">
+                <input type="button" class="btn small formsubmit"
+                  value="Delete"
+                  data-action="webForm/delete"
+                  data-confirm="Are you sure you want to permanently delete this form entry?"
+                >
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

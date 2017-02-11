@@ -1,0 +1,35 @@
+<h2>Google reCAPTCHA Configuration</h2>
+
+<p>You will need to create the API Key for this site by logging into the <a href="https://www.google.com/recaptcha/admin#list" target="_blank">Google reCAPTCHA</a> website and logging in with the Newline Google account.</p>
+
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+  label: "Captcha Site Key"|t,
+  id: 'captchaSiteKey',
+  name: 'captchaSiteKey',
+  instructions: 'Input the Google reCaptcha **Site key**.',
+  value: (settings.captchaSiteKey is defined) ? settings.captchaSiteKey : '',
+  errors: (settings.captchaSiteKey is defined) ? settings.getErrors('captchaSiteKey') : ''
+}) }}
+
+<div class="field" id="settings-captchaTheme-field">
+  <div class="heading">
+    <label id="settings-captchaTheme-label" for="settings-captchaTheme">Captcha Widget Color Theme</label>
+    <div class="instructions">
+      <p>
+        Select the color theme for the widget based on the site's color scheme.
+      </p>
+    </div>
+  </div>
+  {{ forms.radioGroup({
+    options: [
+      { label: 'Light', value: 'light'},
+      { label: 'Dark', value: 'dark'}
+    ],
+    label: 'Color Theme',
+    id: 'captchaTheme',
+    name: 'captchaTheme',
+    value: (settings.captchaTheme is defined) ? settings.captchaTheme : ''
+  }) }}
+</div>
