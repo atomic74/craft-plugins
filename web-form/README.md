@@ -2,6 +2,8 @@
 
 This plugin allows to configure individual submission forms through **Web Form** entry type.
 
+[Release Notes](https://github.com/ohlincik/craft-plugins/tree/master/web-form/docs/release-notes)
+
 ## Form Tag
 
 The following Twig code will generate the form tag:
