@@ -2,6 +2,8 @@
 
 This plugin allows to add a widget to the dashboard that includes some useful links and resources.
 
+[Release Notes](https://github.com/ohlincik/craft-plugins/tree/master/tungsten/docs/release-notes)
+
 ## Resources
 
 * Submit Support Ticket link

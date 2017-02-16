@@ -10,7 +10,7 @@ class TungstenPlugin extends BasePlugin
 
   function getVersion()
   {
-    return '1.1';
+    return '1.1.1';
   }
 
   function getDeveloper()
@@ -21,6 +21,11 @@ class TungstenPlugin extends BasePlugin
   function getDeveloperUrl()
   {
     return 'http://atomic74.com';
+  }
+
+  public function getDocumentationUrl()
+  {
+    return "https://github.com/ohlincik/craft-plugins/tree/master/tungsten";
   }
 
   public function getReleaseFeedUrl()
