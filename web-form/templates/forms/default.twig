@@ -37,10 +37,11 @@
 
 {# ================= Include the form validation code =================== #}
 
-{% includeJsFile '/js/formValidation.min.js' %}
-{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
+{% includeCssResource 'webform/css/formValidation.min.css' %}
+{% includeJsResource 'webform/js/formValidation.min.js' %}
+{% includeJsResource 'webform/js/bootstrapFormValidation.min.js' %}
 {% if entry.captcha %}
-  {% includeJsFile '/js/reCaptcha2.min.js' %}
+  {% includeJsResource 'webform/js/reCaptcha2.min.js' %}
 {% endif %}
 
 {% set validationJs %}

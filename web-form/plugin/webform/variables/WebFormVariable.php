@@ -58,12 +58,16 @@ class WebFormVariable
   }
 
   /**
-   * Return all Web Forms
+   * Return Web Forms
+   *
+   * This could either be ALL web forms or web forms associated with a specific
+   * form handle. The form handle is extracted from query or post params.
    *
    **/
   public function getWebForms()
   {
-    return craft()->webForm->getWebForms();
+    $formHandle = craft()->request->getParam('formHandle');
+    return craft()->webForm->getWebForms($formHandle);
   }
 
   /**
@@ -73,7 +77,25 @@ class WebFormVariable
   public function getWebForm()
   {
     $formId = craft()->request->getRequiredParam('formId');
-
     return craft()->webForm->getWebForm($formId);
+  }
+
+  /**
+   * Return a count of the stale Web Forms (older than 3 months)
+   *
+   **/
+  public function getStaleWebFormsCount($formHandle) {
+    return craft()->webForm->getStaleWebFormsCount($formHandle);
+  }
+
+  /**
+   * Return the list of unique Form Handles in the DB
+   *
+   * This is used to populate the form filter drop-down
+   *
+   **/
+  public function getFormHandles()
+  {
+    return craft()->webForm->getFormHandles();
   }
 }

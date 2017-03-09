@@ -8,12 +8,57 @@ class WebFormService extends BaseApplicationComponent
     return craft()->elements->getCriteria('Entry', $attributes);
   }
 
-  public function getWebForms()
+  public function getFormHandles()
   {
     $webFormRecord = new WebFormRecord();
-    $webFormRecords = $webFormRecord->findAll(array('order' => 'dateCreated desc'));
 
-    if ($webFormRecords) {
+    $webFormHandles = $webFormRecord->findAll(array(
+      'select' => 't.handle',
+      'order' => 't.handle',
+      'distinct' => true
+    ));
+
+    return $webFormHandles;
+  }
+
+  public function getStaleWebFormsCount($formHandle)
+  {
+    $webFormRecord = new WebFormRecord();
+
+    if (empty($formHandle))
+    {
+      $staleWebFormsCount = $webFormRecord->count(array(
+        'condition' => 'dateCreated < :deleteLimit',
+        'params' => array(':deleteLimit' => date('Y-m-d', strtotime('-3 months')))
+      ));
+    }
+    else
+    {
+      $staleWebFormsCount = $webFormRecord->count(array(
+        'condition' => 'dateCreated < :deleteLimit AND handle=:handle',
+        'params' => array(':deleteLimit' => date('Y-m-d', strtotime('-3 months')), ':handle' => $formHandle)
+      ));
+    }
+
+    return $staleWebFormsCount;
+  }
+
+  public function getWebForms($formHandle)
+  {
+    $webFormRecord = new WebFormRecord();
+
+    if (empty($formHandle)) {
+      $webFormRecords = $webFormRecord->findAll(array('order' => 'dateCreated desc'));
+    } else {
+      $webFormRecords = $webFormRecord->findAll(array(
+        'condition' => 'handle=:handle',
+        'params' => array(':handle' => $formHandle),
+        'order' => 'dateCreated desc'
+      ));
+    }
+
+    if ($webFormRecords)
+    {
       $webFormModels = WebFormModel::populateModels($webFormRecords);
       return $webFormModels;
     }
@@ -27,7 +72,8 @@ class WebFormService extends BaseApplicationComponent
 
     $webFormRecord = WebFormRecord::model()->findByAttributes(array('id' => $formId));
 
-    if ($webFormRecord) {
+    if ($webFormRecord)
+    {
       $webFormModel = WebFormModel::populateModel($webFormRecord);
     }
 
@@ -52,17 +98,50 @@ class WebFormService extends BaseApplicationComponent
   {
     $webFormRecord = WebFormRecord::model()->findByAttributes(array('id' => $formId));
 
-    if ($webFormRecord) {
+    if ($webFormRecord)
+    {
       $webFormRecord->delete();
     }
   }
 
-  public function deleteAll()
+  public function deleteAll($formHandle)
   {
     $webFormRecord = new WebFormRecord();;
 
-    if ($webFormRecord) {
-      $webFormRecord->deleteAll();
+    if (empty($formHandle))
+    {
+      $deletedWebFormsCount = $webFormRecord->deleteAll();
     }
+    else
+    {
+      $deletedWebFormsCount = $webFormRecord->deleteAll(array(
+        'condition' => 'handle=:handle',
+        'params' => array(':handle' => $formHandle))
+      );
+    }
+
+    return $deletedWebFormsCount;
+  }
+
+  public function deleteStale($formHandle)
+  {
+    $webFormRecord = new WebFormRecord();
+
+    if (empty($formHandle))
+    {
+      $deletedStaleWebFormsCount = $webFormRecord->deleteAll(array(
+        'condition' => 'dateCreated < :deleteLimit',
+        'params' => array(':deleteLimit' => date('Y-m-d', strtotime('-3 months'))))
+      );
+    }
+    else
+    {
+      $deletedStaleWebFormsCount = $webFormRecord->deleteAll(array(
+        'condition' => 'dateCreated < :deleteLimit AND handle=:handle',
+        'params' => array(':deleteLimit' => date('Y-m-d', strtotime('-3 months')), ':handle' => $formHandle))
+      );
+    }
+
+    return $deletedStaleWebFormsCount;
   }
 }

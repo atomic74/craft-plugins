@@ -18,8 +18,8 @@
     <div class="item" data-position="right" data-colspan="1">
       <div class="pane">
         <p>
-          Form Handle<br>
-          <strong>{{ webForm.handle }}</strong>
+          Form<br>
+          <strong>{{ webForm.handle|title }}</strong>
         </p>
         <p>
           Form Subject<br>
@@ -27,11 +27,11 @@
         </p>
         <p>
           Submitted on<br>
-          <strong>{{ webForm.dateCreated | date('m/d/Y - G:i') }}</strong>
+          <strong>{{ webForm.dateCreated|date('m/d/Y - G:i') }}</strong>
         </p>
         <p>
           Submitted to<br>
-          <strong>{{ webForm.recipients | replace({ ',': '<br>' }) | raw }}</strong>
+          <strong>{{ webForm.recipients|replace({ ',': '<br>' })|raw }}</strong>
         </p>
 
         <div class="field" id="enabled-field">

@@ -3,7 +3,7 @@ namespace Craft;
 
 class WebFormController extends BaseController
 {
-  protected $allowAnonymous = true;
+  protected $allowAnonymous = array('actionSendNotification');
 
   public function actionSendNotification()
   {
@@ -45,7 +45,8 @@ class WebFormController extends BaseController
     ));
 
     // Save the form in the CMS if the setting is enabled
-    if ($saveInCms) {
+    if ($saveInCms)
+    {
       $webFormModel = new WebFormModel();
 
       $webFormModel->handle = $formHandle;
@@ -57,7 +58,8 @@ class WebFormController extends BaseController
     }
 
     // If testMode mode is ON, display the form information on screen
-    if ($testMode) {
+    if ($testMode)
+    {
       $pluginTemplatesPath = craft()->path->getPluginsPath().'webform/templates';
       craft()->path->setTemplatesPath($pluginTemplatesPath);
       echo craft()->templates->render('test-mode', array(
@@ -68,17 +70,20 @@ class WebFormController extends BaseController
       ));
       exit();
     }
-    else {
+    else
+    {
       // Send email message to each recipient individually
       foreach (explode(',',$recipients) as $recipient)
       {
         try
         {
           $message->toEmail = trim($recipient);
-          if ($replyTo) {
+          if ($replyTo)
+          {
             $message->replyTo = $replyTo;
           }
-          if (!craft()->email->sendEmail($message)) {
+          if (!craft()->email->sendEmail($message))
+          {
             WebFormPlugin::log("Failed to send email for {$formHandle} form.", LogLevel::Error);
           }
         }
@@ -103,8 +108,29 @@ class WebFormController extends BaseController
 
   public function actionDeleteAll()
   {
-    craft()->webForm->deleteAll();
-    craft()->userSession->setNotice('All form entries were deleted.');
-    $this->redirect('webform');
+    $formHandle = craft()->request->getParam('formHandle');
+    $deletedWebFormsCount = craft()->webForm->deleteAll($formHandle);
+    craft()->userSession->setNotice("All {$deletedWebFormsCount} form entries were deleted.");
+    $this->redirect($this->buildRedirectUrl($formHandle));
+  }
+
+  public function actionDeleteStale()
+  {
+    $formHandle = craft()->request->getParam('formHandle');
+    $deletedStaleWebFormsCount = craft()->webForm->deleteStale($formHandle);
+    craft()->userSession->setNotice("{$deletedStaleWebFormsCount} form entries older than 3 months were successfully deleted.");
+    $this->redirect($this->buildRedirectUrl($formHandle));
+  }
+
+  protected function buildRedirectUrl($formHandle)
+  {
+    if (empty($formHandle))
+    {
+      return 'webform';
+    }
+    else
+    {
+      return UrlHelper::getCpUrl() . '/webform?formHandle=' . urlencode($formHandle);
+    }
   }
 }

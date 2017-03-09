@@ -11,7 +11,7 @@ class WebFormPlugin extends BasePlugin
 
   public function getVersion()
   {
-    return '2.1.0';
+    return '2.2.0';
   }
 
   public function getDeveloper()

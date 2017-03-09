@@ -3,17 +3,54 @@
 {% set title = 'Web Forms' %}
 
 {% set webForms = craft.webForm.getWebForms %}
+{% set formHandles = craft.webForm.getFormHandles %}
+{% set formHandleCriteria = craft.request.getParam('formHandle') %}
+{% set staleWebFormsCount = craft.webForm.getStaleWebFormsCount(formHandleCriteria) %}
+{% set allWebForms = formHandleCriteria is empty %}
 
 {% block content %}
-
   {% if webForms %}
-    <p style="text-align:right">
-      <a class="btn submit" href="{{ actionUrl('webForm/deleteAll') }}">Delete All</a>
-    </p>
+    <div class="toolbar">
+      <table class="inputs fullwidth collapsible">
+        <tbody>
+          <tr>
+            <td>
+              {% if formHandles|length > 1 %}
+                <form id="getFormHandles" action="{{ url('webform') }}" method="get">
+                  <div class="input">
+                    <div class="select">
+                      <select id="formHandleSelect" name="formHandle">
+                        <option value="">All</option>
+                        {% for formHandle in formHandles %}
+                          <option value="{{ formHandle.handle }}"{% if formHandle.handle == formHandleCriteria %} selected{% endif %}>{{ formHandle.handle|title }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              {% endif %}
+            </td>
+            {% if staleWebFormsCount > 0 %}
+              <td class="thin">
+                <a class="btn stale" href="{{ actionUrl('webForm/deleteStale', { formHandle: formHandleCriteria }) }}">Delete {{ staleWebFormsCount }} Stale Forms</a>
+              </td>
+            {% endif %}
+            <td class="thin">
+              <a class="btn submit" href="{{ actionUrl('webForm/deleteAll', { formHandle: formHandleCriteria }) }}">Delete All {{ webForms|length }} Forms</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {% if allWebForms %}
+      <h2>Listing All {{ webForms|length }} Web Forms</h2>
+    {% else %}
+      <h2>Listing {{ webForms|length }} {{ formHandleCriteria|title }} Web Forms</h2>
+    {% endif %}
     <table class="data fullwidth">
       <thead>
         <tr>
-          <th>Form Handle</th>
+          <th>Form</th>
           <th>Form Subject</th>
           <th>Submitted</th>
         </tr>
@@ -23,14 +60,14 @@
             <tr>
               <td>
                 <a href="{{ url('webform/detail', { formId: webForm.id }) }}">
-                  {{ webForm.handle }}
+                  {{ webForm.handle|title }}
                 </a>
               </td>
               <td>
                 {{ webForm.subject }}
               </td>
               <td>
-                {{ webForm.dateCreated | date('m/d/Y - G:i') }}
+                {{ webForm.dateCreated|date('m/d/Y - G:i') }}
               </td>
               <td>
                 <a href="{{ actionUrl('webForm/delete', { formId: webForm.id }) }}" class="delete icon"></a>
@@ -40,18 +77,42 @@
       </tbody>
     </table>
   {% else %}
-      There are no form entries
+    {% if allWebForms %}
+      <h2>There are no form entries</h2>
+    {% else %}
+      <h2>There are no form entries for {{ formHandleCriteria|title }}</h2>
+      <p><a href="{{ url('webform') }}">List all form entries</a></p>
+    {% endif %}
   {% endif %}
-
 {% endblock %}
 
 {% set myJs %}
-$('a.submit').click(function() {
-  return confirm('Are you sure you want to delete ALL form entries?');
-});
-$('a.delete').click(function() {
-  return confirm('Are you sure you want to delete this form entry?');
-});
+  $('#formHandleSelect').change(function() {
+    $('#getFormHandles').submit();
+  });
+  $('a.stale').click(function() {
+    return confirm('{{ staleWebFormsCount }} form entries older than 3 months will be deleted. Do you want to proceed?');
+  });
+  $('a.submit').click(function() {
+    return confirm('ALL {{ webForms|length }} form entries will be deleted. Do you want to proceed?');
+  });
+  $('a.delete').click(function() {
+    return confirm('Are you sure you want to delete this form entry?');
+  });
+{% endset %}
+
+{% set myCss %}
+  select {
+    border-radius: 3px;
+    border: solid 1px rgba(0, 0, 20, 0.2);
+    color: #29323d;
+    display: inline-block;
+    font-size: 13px;
+    height: 30px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
 {% endset %}
 
 {% includeJs myJs %}
+{% includeCss myCss %}
