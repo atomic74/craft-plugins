@@ -46,27 +46,36 @@ class PaypalStandardPaymentsVariable
       $options['offlineUrl'] = craft()->getSiteUrl();
     }
 
-    // JS
-    craft()->templates->includeJsResource('paypalstandardpayments/js/paypalstandardpayment.js');
+    // Include the Form Validation CSS
+    craft()->templates->includeCssResource('paypalstandardpayments/css/formValidation.min.css');
+
+    // Include the Form Validation JS
+    craft()->templates->includeJsResource('paypalstandardpayments/js/formValidation.min.js');
+    craft()->templates->includeJsResource('paypalstandardpayments/js/bootstrapFormValidation.min.js');
+
+    // Include the Plugin JS
+    craft()->templates->includeJsResource('paypalstandardpayments/js/paypalStandardPayment.js');
+
+    // If CSRF protection is enabled, include JavaScript
     $this->_csrf();
 
-    return TemplateHelper::getRaw('
-<form role="form" id="paypal-payment-form" method="post" action="'.$formAction.'" accept-charset="UTF-8">
-  <input type="hidden" name="cmd" value="'.trim($options['paymentType']).'">
-  <input type="hidden" name="lc" value="US">
-  <input type="hidden" name="currency_code" value="USD">
-  <input type="hidden" name="amount" value="0.00" class="payment-total-amount">
-  <input type="hidden" name="business" value="'.trim($options['paymentEmail']).'">
-  <input type="hidden" name="item_name" value="'.$options['notificationSubject'].'" class="payment-order-title">
-  <input type="hidden" name="invoice" value="order-id" class="payment-order-id">
-  <input type="hidden" name="return" value="'.$options['returnUrl'].'">
-  <input type="hidden" name="cancel_return" value="'.$options['cancelUrl'].'">
-  <input type="hidden" name="offline_return" value="'.$options['offlineUrl'].'">
-  <input type="hidden" name="payment_type" value="online" class="payment-type">
-  <input type="hidden" name="settings[formHandle]" value="'.trim($options['formHandle']).'">
-  <input type="hidden" name="settings[notificationRecipients]" value="'.trim($options['notificationRecipients']).'">
-  <input type="hidden" name="settings[notificationSubject]" value="'.trim($options['notificationSubject']).'">
-  <input type="text" name="your-birthday-is" id="birthday-form-field">');
+    $templateContents = array(
+      'formAction' => $formAction,
+      'paymentType' => trim($options['paymentType']),
+      'paymentEmail' => trim($options['paymentEmail']),
+      'notificationSubject' => $options['notificationSubject'],
+      'returnUrl' => $options['returnUrl'],
+      'cancelUrl' => $options['cancelUrl'],
+      'offlineUrl' => $options['offlineUrl'],
+      'formHandle' => trim($options['formHandle']),
+      'notificationRecipients' => trim($options['notificationRecipients']),
+      'notificationSubject' => trim($options['notificationSubject'])
+    );
+
+    // Render the form tag template
+    return TemplateHelper::getRaw(
+      craft()->paypalStandardPayments->renderPluginTemplate('form-tag', $templateContents)
+    );
   }
 
   // Render the Paypal Sandbox alert if plugin is in test mode
@@ -75,9 +84,53 @@ class PaypalStandardPaymentsVariable
     $pluginSettings = craft()->plugins->getPlugin('paypalstandardpayments')->getSettings();
 
     if ($pluginSettings['testEnabled']) {
-      return TemplateHelper::getRaw('
-<div class="alert alert-danger" role="alert"><strong>In test mode.</strong><br>Go to Paypal Standard Payments plugin settings for instructions and to disable test mode.</div>');
+
+      return TemplateHelper::getRaw(
+        craft()->paypalStandardPayments->renderPluginTemplate('sandbox-alert')
+      );
     }
+  }
+
+  /**
+   * Return Web Forms
+   *
+   * This could either be ALL web forms or web forms associated with a specific
+   * form handle. The form handle is extracted from query or post params.
+   *
+   **/
+  public function getOrders()
+  {
+    $handle = craft()->request->getParam('handle');
+    return craft()->paypalStandardPayments->getOrders($handle);
+  }
+
+  /**
+   * Return a scpecific Web Form
+   *
+   **/
+  public function getOrder()
+  {
+    $orderId = craft()->request->getRequiredParam('orderId');
+    return craft()->paypalStandardPayments->getOrder($orderId);
+  }
+
+  /**
+   * Return a count of the stale Web Forms (older than 3 months)
+   *
+   **/
+  public function getStaleOrdersCount($handle) {
+    return craft()->paypalStandardPayments->getStaleOrdersCount($handle);
+  }
+
+  /**
+   * Return the list of unique Form Handles in the DB
+   *
+   * This is used to populate the form filter drop-down
+   *
+   **/
+  public function getHandles()
+  {
+    return craft()->paypalStandardPayments->getHandles();
   }
 
   // If CSRF protection is enabled, include JavaScript

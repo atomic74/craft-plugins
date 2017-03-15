@@ -1,0 +1,17 @@
+<form role="form" id="paypal-payment-form" method="post" action="{{ formAction }}" accept-charset="UTF-8">
+  <input type="hidden" name="cmd" value="{{ paymentType }}">
+  <input type="hidden" name="lc" value="US">
+  <input type="hidden" name="currency_code" value="USD">
+  <input type="hidden" name="amount" value="0.00" class="payment-total-amount">
+  <input type="hidden" name="business" value="{{ paymentEmail }}">
+  <input type="hidden" name="item_name" value="{{ notificationSubject }}" class="payment-order-title">
+  <input type="hidden" name="invoice" value="order-id" class="payment-order-id">
+  <input type="hidden" name="return" value="{{ returnUrl }}">
+  <input type="hidden" name="cancel_return" value="{{ cancelUrl }}">
+  <input type="hidden" name="offline_return" value="{{ offlineUrl }}">
+  <input type="hidden" name="settings[paymentType]" value="online" class="js-payment-type">
+  <input type="hidden" name="settings[orderTotal]" value="0" class="js-order-total">
+  <input type="hidden" name="settings[formHandle]" value="{{ formHandle }}">
+  <input type="hidden" name="settings[notificationRecipients]" value="{{ notificationRecipients }}">
+  <input type="hidden" name="settings[notificationSubject]" value="{{ notificationSubject }}">
+  <input type="text" name="your-birthday-is" id="birthday-form-field">

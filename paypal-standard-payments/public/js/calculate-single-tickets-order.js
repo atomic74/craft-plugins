@@ -13,5 +13,6 @@ $(document).ready(function(){
     }
     $('#payment-total').html(total.toFixed(2));
     $('.payment-total-amount').val(total.toFixed(2));
+    $('.js-order-total').val(total.toFixed(2));
   });
 });

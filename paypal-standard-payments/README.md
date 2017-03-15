@@ -2,6 +2,8 @@
 
 This plugin allows to submit payments to Paypal using the simple Paypal Standard Payments interface.
 
+[Release Notes](https://github.com/ohlincik/craft-plugins/tree/master/paypal-standard-payments/docs/release-notes)
+
 ## Supported Paypal Payment Options
 
 - **Single Payment Amount:** using the *_xclick* option that simulates the 'Buy Now' Paypal Button

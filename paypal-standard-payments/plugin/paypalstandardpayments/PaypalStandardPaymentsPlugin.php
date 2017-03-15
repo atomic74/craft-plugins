@@ -6,12 +6,17 @@ class PaypalStandardPaymentsPlugin extends BasePlugin
 
   public function getName()
   {
-    return 'Paypal Standard Payments';
+    $pluginName = $this->getSettings()->pluginName;
+    if (is_string($pluginName) ){
+      return $pluginName;
+    } else {
+      return Craft::t( 'Paypal Standard Payments' );
+    }
   }
 
   public function getVersion()
   {
-    return '1.0.0';
+    return '2.0.0';
   }
 
   public function getDeveloper()
@@ -29,10 +34,16 @@ class PaypalStandardPaymentsPlugin extends BasePlugin
     return "https://github.com/ohlincik/craft-plugins/tree/master/paypal-standard-payments";
   }
 
+  public function getReleaseFeedUrl()
+  {
+    return 'https://tcg-craft.s3.amazonaws.com/plugins/paypal-standard-payments/releases.json';
+  }
+
   protected function defineSettings()
   {
     return array(
-      'testEnabled' => array(AttributeType::Bool, 'default' => true)
+      'testEnabled' => array(AttributeType::Bool, 'default' => true),
+      'pluginName' => array(AttributeType::String, 'default' => 'Paypal Standard Payments')
     );
   }
 
@@ -43,4 +54,8 @@ class PaypalStandardPaymentsPlugin extends BasePlugin
     ));
   }
 
+  public function hasCpSection()
+  {
+    return true;
+  }
 }

@@ -11,7 +11,7 @@
 {% endif %}
 
 {% block content %}
-  <div class="container page">
+  <div class="container page page-no-sub-nav">
     <div class="row">
       <div class="col-md-9 col-md-offset-3 content">
         <ul class="crumbs">
@@ -36,7 +36,7 @@
 
         {# Generate the form tag with all hidden input setup fields #}
         {{ craft.paypalStandardPayments.formTagWithHiddenFields({
-          'formHandle': 'tickets-order',
+          'formHandle': 'tickets',
           'paymentEmail': paypalStandardPayments.paymentEmail,
           'paymentType': '_xclick',
           'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
@@ -125,7 +125,7 @@
                     {% endif %}
                   </div>
                 </div>
-                <a href="/shows-events/seating-chart" class="btn green">View Seating Chart</a>
+                <a href="/shows-events/seating-chart" class="btn green" target="_blank">View Seating Chart</a>
               </div>
             </div>
           {% endif %}
@@ -231,10 +231,6 @@
 {% endblock %}
 
 {# ================= Include the form validation code =================== #}
-
-{% includeCssFile '/css/formValidation.min.css' %}
-{% includeJsFile '/js/formValidation.min.js' %}
-{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
 {% includeJsFile '/js/validate-and-process-single-tickets-order.js' %}
 
 {# ================= Include the form calculation code =================== #}

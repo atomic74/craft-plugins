@@ -4,113 +4,87 @@ namespace Craft;
 class PaypalStandardPaymentsController extends BaseController
 {
 
-  protected $allowAnonymous = true;
+  protected $allowAnonymous = array('actionProcessOrder');
 
-  public function actionSendNotification()
+  public function actionProcessOrder()
   {
-    $template_dir = 'email/';
-    $default_template = $template_dir.'default-payment-notification';
-    $pluginSettings = craft()->plugins->getPlugin('paypalstandardpayments')->getSettings();
-    $error_message = '';
-
     $this->requireAjaxRequest();
+    $pluginSettings = craft()->plugins->getPlugin('paypalstandardpayments')->getSettings();
+    $testMode = $pluginSettings['testEnabled'];
+
     $settings = craft()->request->getPost('settings');
     $fields = craft()->request->getPost('fields');
     $amounts = craft()->request->getPost('amounts');
 
-    $testMode = $pluginSettings['testEnabled'];
     $formHandle = $settings['formHandle'];
-
     $recipients = $settings['notificationRecipients'];
     $subject = $settings['notificationSubject'];
-    $template = $template_dir.$formHandle.'-payment-notification';
-    $redirect_url = "success=✓";
-    $order_id = date('Ymd').'-'.substr(md5($recipients.time()),0,8);
+    $orderId = date('Ymd').'-'.substr(md5($recipients.time()),0,8);
 
-    // If custom email template does not exist use the default template
-    if (!craft()->templates->doesTemplateExist($template))
-    {
-      $template = $default_template;
-    }
-
-    // Build the email message
-    $message = new EmailModel();
-    $message->subject = $subject;
-
-    // Create the html version of the content
-    $message->htmlBody = craft()->templates->render($template, array(
+    $orderData = array(
+      'formHandle' => $formHandle,
+      'recipients' => $recipients,
       'subject' => $subject,
-      'order_id' => $order_id,
+      'orderId' => $orderId,
       'fields' => $fields,
       'amounts' => $amounts
-    ));
+    );
 
-    // If testMode mode is ON, return the form information on screen
-    if ($testMode) {
-      $honeypot_test = ($this->validateHoneypot('your-birthday-is')) ? "PASSED" : "FAILED";
-      $honeypot_test = "PASSED";
-      $pluginTemplatesPath = craft()->path->getPluginsPath().'webform/templates';
-      craft()->path->setTemplatesPath($pluginTemplatesPath);
-      $response_content = craft()->templates->render('test-mode', array(
-        'recipients' => $recipients,
-        'subject' => $subject,
-        'honeypot'  => $honeypot_test,
-        'content' => $message->htmlBody,
-      ));
-      $this->returnJson(array(
-        'message' => 'preview',
-        'order_id' => $order_id,
-        'content' => $response_content
-      ));
-      exit();
-    }
-    else {
-      // Only actually send it if the honeypot test was valid
-      if ($this->validateHoneypot('your-birthday-is')) {
-        // Send email message to each recipient individually
-        foreach (explode(',',$recipients) as $recipient)
-        {
-          try
-          {
-            $message->toEmail = trim($recipient);
-            if (!craft()->email->sendEmail($message)) {
-              PaypalStandardPaymentsPlugin::log("Failed to send notification email for {$formHandle} form.", LogLevel::Error);
-              $error_message = $error_message."Failed to send notification email for {$formHandle} form.\n";
-            }
-          }
-          catch (\Exception $e)
-          {
-            PaypalStandardPaymentsPlugin::log("Failed to send notification email for {$formHandle} form. Reason: ".$e->getMessage(), LogLevel::Error);
-            $error_message = $error_message."Failed to send notification email for {$formHandle} form. Reason: ".$e->getMessage()."\n";
-          }
-        }
-      }
-      else {
-        PaypalStandardPaymentsPlugin::log("Honeypot validation failed. Most likely a Spambot tired to submit the {$formHandle} form.", LogLevel::Info);
-        $error_message = $error_message."Honeypot validation failed. Most likely a Spambot tired to submit the {$formHandle} form.\n";
-      }
+    // Save the payment record in the CMS
+    $orderModel = new PaypalStandardPayments_OrderModel();
 
-      // Return the Verdict
-      $this->returnJson(array(
-        'message' => 'success',
-        'order_id' => $order_id,
-        'error_message' => empty($error_message) ? 'no errors' : $response_message
-      ));
-    }
+    $orderModel->handle = $formHandle;
+    $orderModel->paymentType = $settings['paymentType'];
+    $orderModel->orderId = $orderId;
+    $orderModel->orderTotal = $settings['orderTotal'];
+    $orderModel->recipients = $testMode ? '[-- test --], '.$recipients : $recipients;
+    $orderModel->subject = $subject;
+    $orderModel->purchaserName = craft()->paypalStandardPayments->buildPurchaserName($fields);
+    $orderModel->purchaserEmail = craft()->paypalStandardPayments->buildPurchaserEmail($fields);
+    $orderModel->content = craft()->paypalStandardPayments->renderEmailContent($orderData);
+
+    craft()->paypalStandardPayments->addOrder($orderModel);
+
+    // Send out the email notification
+    $notificationResult = craft()->paypalStandardPayments->sendNotification($orderData, $testMode);
+
+    // return the response in JSON format
+    $this->returnJson($notificationResult);
   }
-  /**
-   * Checks that the 'honeypot' field has not been filled out (assuming one has been set).
-   *
-   * @param string $fieldName The honeypot field name.
-   * @return bool
-   */
-  protected function validateHoneypot($fieldName)
+
+  public function actionDelete()
   {
-    if (!$fieldName)
+    $orderId = craft()->request->getRequiredParam('orderId');
+    craft()->paypalStandardPayments->deleteOrder($orderId);
+    craft()->userSession->setNotice('Order was deleted.');
+    $this->redirect('paypalstandardpayments');
+  }
+
+  public function actionDeleteAll()
+  {
+    $handle = craft()->request->getParam('handle');
+    $deletedOrdersCount = craft()->paypalStandardPayments->deleteAll($handle);
+    craft()->userSession->setNotice("All {$deletedOrdersCount} orders were deleted.");
+    $this->redirect($this->buildRedirectUrl($handle));
+  }
+
+  public function actionDeleteStale()
+  {
+    $handle = craft()->request->getParam('handle');
+    $deletedStaleOrdersCount = craft()->paypalStandardPayments->deleteStale($handle);
+    craft()->userSession->setNotice("{$deletedStaleOrdersCount} orders older than 3 months were successfully deleted.");
+    $this->redirect($this->buildRedirectUrl($handle));
+  }
+
+  protected function buildRedirectUrl($handle)
+  {
+    if (empty($handle))
     {
-      return true;
+      return 'paypalstandardpayments';
     }
-    $honey = craft()->request->getPost($fieldName);
-    return $honey == '';
+    else
+    {
+      return UrlHelper::getCpUrl() . '/paypalstandardpayments?handle=' . urlencode($handle);
+    }
   }
 }

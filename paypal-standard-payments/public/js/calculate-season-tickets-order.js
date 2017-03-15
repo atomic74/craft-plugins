@@ -20,13 +20,14 @@ $(document).ready(function(){
     $('.payment-subtotal-amount').val(subtotal.toFixed(2));
     $('#payment-total').html(total.toFixed(2));
     $('.payment-total-amount').val(total.toFixed(2));
+    $('.js-order-total').val(total.toFixed(2));
   });
   $('#fields_payment_options').change(function() {
     if ($(this).val() != 'Credit Card') {
-      $('.payment-type').val('offline')
+      $('.js-payment-type').val('offline')
     }
     else {
-      $('.payment-type').val('online')
+      $('.js-payment-type').val('online')
     }
   });
 });

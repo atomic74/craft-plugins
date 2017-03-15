@@ -22,7 +22,7 @@ $(document).ready(function() {
     if (donationAmountValid()) {
       $('#processing-submission').show();
       $('#paypal-payment-form').hide();
-      paypalStandardPayment.sendNotification(e.target);
+      paypalStandardPayment.processOrder(e.target);
     }
     else {
       $('#validation-error').text('Please make sure to include your donation amount.');

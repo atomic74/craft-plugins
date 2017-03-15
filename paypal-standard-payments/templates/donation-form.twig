@@ -4,7 +4,7 @@
 {% set uri = 'donation-form' %}
 
 {% block content %}
-  <div class="container page">
+  <div class="container page page-no-sub-nav">
     <div class="row">
       <div class="col-md-9 col-md-offset-3 content">
         <ul class="crumbs">
@@ -33,7 +33,7 @@
 
             {# Generate the form tag with all hidden input setup fields #}
             {{ craft.paypalStandardPayments.formTagWithHiddenFields({
-              'formHandle': 'donation-form',
+              'formHandle': 'donation',
               'paymentEmail': paypalStandardPayments.paymentEmail,
               'paymentType': '_donations',
               'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
@@ -190,7 +190,7 @@
               <div class="row">
                 <div class="col-xs-12">
                   {% include "partials/blocks/custom-form-fields/dropdown" with {
-                    inputName: 'payment_option',
+                    inputName: 'payment_options',
                     required: true,
                     label: 'Payment Option',
                     promptOption: 'Select payment method...',
@@ -225,10 +225,6 @@
 {% endblock %}
 
 {# ================= Include the form validation code =================== #}
-
-{% includeCssFile '/css/formValidation.min.css' %}
-{% includeJsFile '/js/formValidation.min.js' %}
-{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
 {% includeJsFile '/js/validate-and-process-donation-form.js' %}
 
 {# ================= Include the form calculation code =================== #}

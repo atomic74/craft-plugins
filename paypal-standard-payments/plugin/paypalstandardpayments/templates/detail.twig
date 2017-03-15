@@ -1,0 +1,70 @@
+{% extends '_layouts/cp' %}
+
+{% set order = craft.paypalStandardPayments.getOrder %}
+
+{% set title = 'Order: ' ~ order.orderId %}
+
+{% set crumbs = [
+  { 'label': 'Orders', 'url': url('paypalstandardpayments') }
+] %}
+
+{% block main %}
+  <div class="grid first">
+    <div class="item" data-position="left" data-min-colspan="2" data-max-colspan="3">
+      <div id="fields" class="pane">
+        <iframe src="{{ url('paypalstandardpayments/content', { orderId: order.id }) }}" frameborder="0" width="100%" height="500"></iframe>
+      </div>
+    </div>
+    <div class="item" data-position="right" data-colspan="1">
+      <div class="pane">
+        <p>
+          Order ID<br>
+          <strong>{{ order.orderId }}</strong>
+        </p>
+        <p>
+          Order Type<br>
+          <strong>{{ order.handle|title }}</strong>
+        </p>
+        <p>
+          Payment Type<br>
+          <strong>{{ order.paymentType|title }}</strong>
+        </p>
+        <p>
+          Purchaser Name<br>
+          <strong>{{ order.purchaserName }}</strong>
+        </p>
+        <p>
+          Purchaser Email<br>
+          <strong>
+            <a href="mailto:{{ order.purchaserEmail }}">
+              {{ order.purchaserEmail }}
+            </a>
+          </strong>
+        </p>
+        <p>
+          Submitted on<br>
+          <strong>{{ order.dateCreated|date('m/d/Y - G:i') }}</strong>
+        </p>
+        <p>
+          Submitted to<br>
+          <strong>{{ order.recipients|replace({ ',': '<br>' })|raw }}</strong>
+        </p>
+
+        <div class="field" id="enabled-field">
+          <div class="input">
+            <div class="right">
+              <form action="" method="get">
+                <input type="hidden" name="orderId" value="{{ order.id }}">
+                <input type="button" class="btn small formsubmit"
+                  value="Delete"
+                  data-action="paypalStandardPayments/delete"
+                  data-confirm="Are you sure you want to permanently delete this record?"
+                >
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

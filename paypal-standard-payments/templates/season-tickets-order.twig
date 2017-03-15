@@ -4,14 +4,14 @@
 {% set uri = 'season-tickets-order' %}
 
 {% block content %}
-  <div class="container page">
+  <div class="container page page-no-sub-nav">
     <div class="row">
       <div class="col-md-9 col-md-offset-3 content">
         <ul class="crumbs">
           <li><a href="/">Home</a>&nbsp;&bull;&nbsp;</li>
           <li><a href="/shows-events/">Shows & Events</a>&nbsp;&bull;&nbsp;</li>
           <li>Season Tickets</li>
-        </ul><br/>
+        </ul><br class="hidden-xs"/>
         <h1>Season Tickets</h1>
         {% if entry.mainContent %}
           {% for matrixBlock in entry.mainContent %}
@@ -30,7 +30,7 @@
 
         {# Generate the form tag with all hidden input setup fields #}
         {{ craft.paypalStandardPayments.formTagWithHiddenFields({
-          'formHandle': 'tickets-order',
+          'formHandle': 'season tickets',
           'paymentEmail': paypalStandardPayments.paymentEmail,
           'paymentType': '_xclick',
           'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
@@ -78,11 +78,11 @@
 
             <h3>Seating Preferences</h3>
 
-            <h4>Traditional seating</h4>
+            <h4>Traditional Seating</h4>
 
             <p>Gives you the same reserved seat for each production on your season ticket. Not available for Youtheatre season. Only available at start of season.</p>
 
-            <h4>Open Card Seating</h4>
+            <h4>Open Card and/or Choice Card Seating</h4>
 
             <p>Flexible performance and seating choice. Open Card members may reserve best available seats before the Box Office opens to the general public. Only available at start of season.</p>
 
@@ -115,13 +115,17 @@
               </div>
             </div>
 
+            <h4>Select Day Preference</h4>
+
+            <p>If you selected <strong>Traditional Seating</strong> above, please specify your <strong>Day Preference</strong> below</p>
+
             <div class="row">
               <div class="col-xs-12">
                 {% include "partials/blocks/custom-form-fields/dropdown" with {
                   inputName: 'day_preference',
-                  required: true,
+                  required: false,
                   label: 'Day Preference',
-                  promptOption: 'Please select an option above...',
+                  promptOption: 'Select one...',
                   options: [
                     {label: 'Week 1 - Thursday'},
                     {label: 'Week 1 - Friday'},
@@ -281,10 +285,6 @@
 {% endblock %}
 
 {# ================= Include the form validation code =================== #}
-
-{% includeCssFile '/css/formValidation.min.css' %}
-{% includeJsFile '/js/formValidation.min.js' %}
-{% includeJsFile '/js/bootstrapFormValidation.min.js' %}
 {% includeJsFile '/js/validate-and-process-season-tickets-order.js' %}
 
 {# ================= Include the form calculation code =================== #}

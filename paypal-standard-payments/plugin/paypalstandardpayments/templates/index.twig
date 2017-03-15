@@ -1,0 +1,132 @@
+{% extends '_layouts/cp' %}
+
+{% set title = 'Orders' %}
+
+{% set orders = craft.paypalStandardPayments.getOrders %}
+{% set handles = craft.paypalStandardPayments.getHandles %}
+{% set handleCriteria = craft.request.getParam('handle') %}
+{% set staleOrdersCount = craft.paypalStandardPayments.getStaleOrdersCount(handleCriteria) %}
+{% set allRecords = handleCriteria is empty %}
+
+{% block content %}
+  {% if orders %}
+    <div class="toolbar">
+      <table class="inputs fullwidth collapsible">
+        <tbody>
+          <tr>
+            <td>
+              {% if handles|length > 1 %}
+                <form id="getHandles" action="{{ url('paypalstandardpayments') }}" method="get">
+                  <div class="input">
+                    <div class="select">
+                      <select id="handleSelect" name="handle">
+                        <option value="">All</option>
+                        {% for handle in handles %}
+                          <option value="{{ handle.handle }}"{% if handle.handle == handleCriteria %} selected{% endif %}>{{ handle.handle|title }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              {% endif %}
+            </td>
+            {% if staleOrdersCount > 0 %}
+              <td class="thin">
+                <a class="btn stale" href="{{ actionUrl('paypalStandardPayments/deleteStale', { handle: handleCriteria }) }}">Delete {{ staleOrdersCount }} Stale Orders</a>
+              </td>
+            {% endif %}
+            <td class="thin">
+              <a class="btn submit" href="{{ actionUrl('paypalStandardPayments/deleteAll', { handle: handleCriteria }) }}">Delete All {{ orders|length }} Orders</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {% if allRecords %}
+      <h2>Listing All {{ orders|length }} Orders</h2>
+    {% else %}
+      <h2>Listing {{ orders|length }} {{ handleCriteria|title }} Orders</h2>
+    {% endif %}
+    <table class="data fullwidth">
+      <thead>
+        <tr>
+          <th>Payment Type</th>
+          <th>Order ID</th>
+          <th>Subject</th>
+          <th>Order Total</th>
+          <th>Purchaser Name</th>
+          <th>Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+            <tr>
+              <td>
+                {{ order.paymentType|title }}
+              </td>
+              <td>
+                <a href="{{ url('paypalstandardpayments/detail', { orderId: order.id }) }}">
+                  {{ order.orderId }}
+                </a>
+              </td>
+              <td>
+                {{ order.subject }}
+              </td>
+              <td>
+                ${{ order.orderTotal|number_format(2) }}
+              </td>
+              <td>
+                <a href="mailto:{{ order.purchaserEmail }}">
+                  {{ order.purchaserName }}
+                </a>
+              </td>
+              <td>
+                {{ order.dateCreated|date('m/d/y - h:i a') }}
+              </td>
+              <td>
+                <a href="{{ actionUrl('paypalStandardPayments/delete', { orderId: order.id }) }}" class="delete icon"></a>
+              </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    {% if allRecords %}
+      <h2>There are no orders</h2>
+    {% else %}
+      <h2>There are no orders for {{ handleCriteria|title }}</h2>
+      <p><a href="{{ url('paypalstandardpayments') }}">List all orders</a></p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% set myJs %}
+  $('#handleSelect').change(function() {
+    $('#getHandles').submit();
+  });
+  $('a.stale').click(function() {
+    return confirm('{{ staleOrdersCount }} orders older than 3 months will be deleted. Do you want to proceed?');
+  });
+  $('a.submit').click(function() {
+    return confirm('ALL {{ orders|length }} orders will be deleted. Do you want to proceed?');
+  });
+  $('a.delete').click(function() {
+    return confirm('Are you sure you want to delete this order?');
+  });
+{% endset %}
+
+{% set myCss %}
+  select {
+    border-radius: 3px;
+    border: solid 1px rgba(0, 0, 20, 0.2);
+    color: #29323d;
+    display: inline-block;
+    font-size: 13px;
+    height: 30px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+{% endset %}
+
+{% includeJs myJs %}
+{% includeCss myCss %}

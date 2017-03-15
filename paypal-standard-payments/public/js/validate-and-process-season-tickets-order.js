@@ -22,7 +22,7 @@ $(document).ready(function() {
     if (ticketsAreSelected()) {
       $('#processing-submission').show();
       $('#paypal-payment-form').hide();
-      paypalStandardPayment.sendNotification(e.target);
+      paypalStandardPayment.processOrder(e.target);
     }
     else {
       $('#validation-error').text('Please select at least one ticket option before submitting your order.');

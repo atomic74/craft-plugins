@@ -1,5 +1,15 @@
 {% import "_includes/forms" as forms %}
 
+{{  forms.textField({
+  first: true,
+  label: "Plugin Name"|t,
+  instructions: "How the plugin should be named in the CP"|t,
+  id: 'pluginName',
+  name: 'pluginName',
+  value: settings.pluginName,
+  required: true
+}) }}
+
 {{ forms.lightswitchField({
   label: "Test Mode"|t,
   id: 'testEnabled',
@@ -9,5 +19,3 @@
   required: true,
   on: (settings.testEnabled is defined) ? settings.testEnabled : ""
 }) }}
-
-
