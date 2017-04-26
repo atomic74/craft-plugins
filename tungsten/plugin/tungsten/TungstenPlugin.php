@@ -10,7 +10,7 @@ class TungstenPlugin extends BasePlugin
 
   function getVersion()
   {
-    return '1.1.1';
+    return '1.1.2';
   }
 
   function getDeveloper()
@@ -46,5 +46,13 @@ class TungstenPlugin extends BasePlugin
     return craft()->templates->render('tungsten/settings', array(
       'settings' => $this->getSettings()
     ));
+  }
+
+  public function init()
+  {
+    if (craft()->request->isCpRequest())
+    {
+      craft()->templates->includeCssResource('tungsten/redactor.css');
+    }
   }
 }
