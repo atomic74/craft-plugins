@@ -1,0 +1,16 @@
+.container {
+  background-position: top center;
+  background-repeat: repeat-y;
+}
+
+@media(min-width:768px){
+  .container {
+    background-image: url('//tcg-blueprint.s3.amazonaws.com/bg_750_grid.png');
+  }
+}
+
+@media(min-width:992px){
+  .container {
+    background-image: url('//tcg-blueprint.s3.amazonaws.com/bg_970_grid.png');
+  }
+}

@@ -36,6 +36,7 @@ class TungstenPlugin extends BasePlugin
   protected function defineSettings()
   {
     return array(
+      'tcgShowBootstrapGrid' => array(AttributeType::Bool, 'default' => false),
       'tcgTrainingVideosUrl' => array(AttributeType::String, 'default' => ''),
       'tcgNotes' => array(AttributeType::Mixed, 'default' => '')
     );

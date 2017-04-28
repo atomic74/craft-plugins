@@ -1,5 +1,15 @@
 {% import "_includes/forms" as forms %}
 
+{{ forms.lightswitchField({
+  label: "Show Bootstrap Grid"|t,
+  id: 'tcgShowBootstrapGrid',
+  name: 'tcgShowBootstrapGrid',
+  instructions: 'Display the grid background for layout purposes. **The Grid is automatically disabled on LIVE site**',
+  on: settings.tcgShowBootstrapGrid
+}) }}
+
+<hr>
+
 {{ forms.textField({
   label: "Training Videos URL"|t,
   id: 'tcgTrainingVideosUrl',

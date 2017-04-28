@@ -40,4 +40,28 @@ class TungstenVariable
       return $appDirUrl.$filename;
     }
   }
+
+  /**
+   * craft.tungsten.showBootstrapGrid() incldes grid background css in a
+   * container div if enabled and the site is in dev mode (local or staging).
+   *
+   * @return void
+   */
+  public function showBootstrapGrid() {
+    $pluginSettings = craft()->plugins->getPlugin('tungsten')->getSettings();
+    $tcgShowBootstrapGrid = $pluginSettings->tcgShowBootstrapGrid;
+
+    if ($tcgShowBootstrapGrid) {
+      $devMode = false;
+      $requestUrl = craft()->request->getHostInfo();
+      $devSites = array('.dev', 'atomicbeta.com');
+      foreach ($devSites as $test) {
+        if (strstr($requestUrl, $test)) $devMode = true;
+      }
+
+      if ($devMode) {
+        craft()->templates->includeCssResource('tungsten/grids.css');
+      }
+    }
+  }
 }
