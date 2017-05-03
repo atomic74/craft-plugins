@@ -1,0 +1,80 @@
+{% set order = craft.paypalStandardPayments.getOrderForPrint %}
+{% set submitted = order.submitted %}
+{% set content = order.content %}
+{% set orderId = content.orderId %}
+{% set subject = content.subject %}
+{% set fields = content.fields %}
+{% set amounts = content.amounts %}
+
+{% includeCssResource 'paypalstandardpayments/cp/print.css' %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>{{ subject }}</title>
+</head>
+
+<body>
+  <table class="content" cellpadding="0" cellspacing="0">
+    <tr>
+      <td class="heading">
+        <div class="subject">{{ subject }}</div>
+        <div class="order-meta">
+          Order ID: {{ orderId }}<br>
+          Submitted: {{ submitted|date('m/d/y - h:i a') }}
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="content-wrap">
+        <table class="order" cellpadding="0" cellspacing="0">
+          <tbody>
+            {% for field in fields %}
+              {% if field.value is defined and field.value == "__section__" %}
+                <tr class="section-heading">
+                  <td colspan="2">{{ field.label }}</td>
+                </tr>
+              {% else %}
+                {% if field.value is defined and field.value is not empty %}
+                  <tr>
+                    <th>{{ field.label }}</th>
+                    <td>
+                      {% if field.value is not defined %}
+                        -- n/a --
+                      {% else %}
+                        {% if field.value[0] is not defined and field.value is not empty %}
+                          {{ field.value }}
+                        {% elseif field.value|length == 1 %}
+                          {{ field.value[0] }}
+                        {% else %}
+                          <ul>
+                            {% for option in field.value %}
+                              <li>{{ option }}</li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            <tr class="section-heading">
+              <td colspan="2">
+                Payment Details
+              </td>
+            </tr>
+            {% for amount in amounts %}
+              <tr>
+                <th>{{ amount.label }}</th>
+                <td class="amount">${{ amount.value | number_format(2) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

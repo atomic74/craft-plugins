@@ -1,0 +1,220 @@
+{# Class Entry template #}
+
+{% extends "_layouts/base" %}
+{% set uri = entry.uri %}
+
+{% block content %}
+  <div class="container page page-no-sub-nav">
+    <div class="row">
+      <div class="col-md-9 col-md-offset-3 content">
+        <ul class="crumbs">
+          <li><a href="/">Home</a>&nbsp;&bull;&nbsp;</li>
+          <li><a href="/education/">Education</a>&nbsp;&bull;&nbsp;</li>
+          <li><a href="/education/classes/">Classes</a>&nbsp;&bull;&nbsp;</li>
+          <li>Class Registration</li>
+        </ul><br/>
+        <h1>Class Registration</h1>
+
+        <h2>{{ entry.title }}</h2>
+
+        <p>
+          <strong>{{ entry.classPeriod }}</strong><br>
+          <strong>{{ entry.classMeetingTime }}</strong><br>
+          <strong>Cost: ${{ entry.classCost|number(2) }}</strong>
+        </p>
+
+        {{ entry.classDescription }}
+
+        <hr>
+
+        <p>Fields marked with <span class="text-danger"><strong>*</strong></span> are required.</p>
+
+        {# Display an alert when in TEST mode for the Paypal Standard Payments Plugin #}
+        {{ craft.paypalStandardPayments.sandboxAlert() }}
+
+        {# Generate the form tag with all hidden input setup fields #}
+        {{ craft.paypalStandardPayments.formTagWithHiddenFields({
+          'formHandle': 'classes',
+          'paymentEmail': paypalStandardPayments.paymentEmail,
+          'paymentType': '_xclick',
+          'notificationRecipients': paypalStandardPayments.paymentNotificationRecipients,
+          'notificationSubject': 'Class Registration - ' ~ entry.title,
+          'returnUrl': url('education/classes') ~ '?result=✓',
+          'cancelUrl': url('education/classes') ~ '?result=x',
+          'offlineUrl': url('education/classes') ~ '?result=c'
+        }) }}
+
+          <h3>Contact Information</h3>
+
+          {% include "partials/blocks/custom-form-fields/formSection" with {
+            sectionTitle: 'Contact Information'
+          } only %}
+
+          <div class="row">
+            <div class="col-xs-12">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'full_name',
+                required: true,
+                label: 'Name',
+                placeholder: "Student's Full Name"
+              } only %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'age',
+                required: false,
+                label: 'Age',
+                helpBlock: 'If 18 or under'
+              } only %}
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'dob',
+                required: false,
+                label: 'Date of Birth',
+                placeholder: 'MM/DD/YYYY',
+                helpBlock: 'If 18 or under'
+              } only %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'address',
+                required: false,
+                label: 'Address'
+              } only %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-4">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'city',
+                required: false,
+                label: 'City'
+              } only %}
+            </div>
+            <div class="col-xs-12 col-sm-4">
+              {% include "partials/blocks/custom-form-fields/dropdownUsStates" with {
+                inputName: 'state',
+                required: false,
+                label: 'State',
+                promptOption: 'Select a State...'
+              } only %}
+            </div>
+            <div class="col-xs-12 col-sm-4">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'zip',
+                required: false,
+                label: 'Zip'
+              } only %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'phone',
+                required: true,
+                label: 'Daytime Phone',
+                placeholder: '(XXX) XXX-XXXX',
+                helpBlock: 'Please provide your preferred phone number in the following format: (XXX) XXX-XXXX'
+              } only %}
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              {% include "partials/blocks/custom-form-fields/textbox" with {
+                inputName: 'email',
+                required: true,
+                label: 'Email Address',
+                placeholder: 'Current Email Address',
+                helpBlock: 'Email will be used to confirm registration'
+              } only %}
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <h3>Payment Details</h3>
+
+              {% include "partials/blocks/custom-form-fields/formSection" with {
+                sectionTitle: 'Order Details'
+              } only %}
+
+              {% set paymentOptions = [] %}
+
+              {% for option in entry.classPaymentOptions %}
+                {% if option.enabled %}
+                  {% set optionLabel = option.optionLabel ~ ' — $' ~ option.amount %}
+                  {% set paymentOptions = paymentOptions|merge([{label: optionLabel, value: option.amount}]) %}
+                {% endif %}
+              {% endfor %}
+
+              <div class="payment-options-radio-buttons">
+                {% include "partials/payments/radioButtons" with {
+                  inputName: 'payment_option',
+                  required: true,
+                  label: 'Payment Option',
+                  options: paymentOptions
+                } only %}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12">
+              {% include "partials/blocks/custom-form-fields/dropdown" with {
+                inputName: 'payment_method',
+                required: true,
+                label: 'Payment Method',
+                promptOption: 'Select one...',
+                options: [
+                  {label: 'Credit Card'},
+                  {label: 'Check'}
+                ],
+                helpBlock: ''
+              } only %}
+            </div>
+          </div>
+
+          <div class="order-total">
+            <input type="hidden" name="amounts[payment_total][label]" value="Payment Total">
+            <input type="hidden" name="amounts[payment_total][value]" class="payment-total-amount" value="0">
+            <h5 class="amount">
+              $<span id="payment-total">0.00</span>
+            </h5>
+            <h5>Payment Total:</h5>
+          </div>
+
+          <br>
+
+          <div id="validation-error" class="alert alert-danger" role="alert" style="display:none">
+            Please correct the errors above before submitting your order.
+          </div>
+
+          <div class="submit">
+            <button class="submit btn green">Submit your class registration</button>
+          </div>
+
+        </form>
+
+        <div id="processing-submission" style="display:none;margin:100px auto;text-align:center;">
+          <p><img src="http://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
+          <p>Processing your form submission, please wait...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{# ================= Include the form validation code =================== #}
+{% includeJsFile '/js/validate-and-process-registration.js' %}
+
+{# ================= Include the form calculation code =================== #}
+{% includeJsFile '/js/calculate-registration.js' %}

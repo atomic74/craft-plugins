@@ -100,33 +100,5 @@
   {% endif %}
 {% endblock %}
 
-{% set myJs %}
-  $('#handleSelect').change(function() {
-    $('#getHandles').submit();
-  });
-  $('a.stale').click(function() {
-    return confirm('{{ staleOrdersCount }} orders older than 3 months will be deleted. Do you want to proceed?');
-  });
-  $('a.submit').click(function() {
-    return confirm('ALL {{ orders|length }} orders will be deleted. Do you want to proceed?');
-  });
-  $('a.delete').click(function() {
-    return confirm('Are you sure you want to delete this order?');
-  });
-{% endset %}
-
-{% set myCss %}
-  select {
-    border-radius: 3px;
-    border: solid 1px rgba(0, 0, 20, 0.2);
-    color: #29323d;
-    display: inline-block;
-    font-size: 13px;
-    height: 30px;
-    padding: 6px 12px;
-    white-space: nowrap;
-  }
-{% endset %}
-
-{% includeJs myJs %}
-{% includeCss myCss %}
+{% includeCssResource 'paypalstandardpayments/cp/index.css' %}
+{% includeJsResource 'paypalstandardpayments/cp/index.js' %}

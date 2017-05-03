@@ -1,5 +1,5 @@
 // Paypal Standard Payment JS
-var paypalStandardPayment = {
+var paypalStandardPayments = {
   processOrder: function (form) {
     console.log('Processing order...');
     var data = $(form).serialize();
@@ -9,7 +9,6 @@ var paypalStandardPayment = {
     }
     // Process order
     $.post('/actions/paypalStandardPayments/processOrder', data, function(response) {
-      console.log(response.message);
 
       // Show the email notification content in a new tab if in TEST mode
       if (response.message == 'preview') {

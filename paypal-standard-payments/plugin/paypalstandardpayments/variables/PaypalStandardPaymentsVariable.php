@@ -49,12 +49,12 @@ class PaypalStandardPaymentsVariable
     // Include the Form Validation CSS
     craft()->templates->includeCssResource('paypalstandardpayments/css/formValidation.min.css');
 
+    // Include the Plugin JS
+    craft()->templates->includeJsResource('paypalstandardpayments/js/paypalStandardPayments.js');
+
     // Include the Form Validation JS
     craft()->templates->includeJsResource('paypalstandardpayments/js/formValidation.min.js');
     craft()->templates->includeJsResource('paypalstandardpayments/js/bootstrapFormValidation.min.js');
-
-    // Include the Plugin JS
-    craft()->templates->includeJsResource('paypalstandardpayments/js/paypalStandardPayment.js');
 
     // If CSRF protection is enabled, include JavaScript
     $this->_csrf();
@@ -92,10 +92,10 @@ class PaypalStandardPaymentsVariable
   }
 
   /**
-   * Return Web Forms
+   * Return Orders
    *
-   * This could either be ALL web forms or web forms associated with a specific
-   * form handle. The form handle is extracted from query or post params.
+   * This could either be ALL orders or orders associated with a specific
+   * handle. The handle is extracted from query or post params.
    *
    **/
   public function getOrders()
@@ -105,7 +105,7 @@ class PaypalStandardPaymentsVariable
   }
 
   /**
-   * Return a scpecific Web Form
+   * Return a specific Order
    *
    **/
   public function getOrder()
@@ -114,8 +114,23 @@ class PaypalStandardPaymentsVariable
     return craft()->paypalStandardPayments->getOrder($orderId);
   }
 
+  public function getOrderForPrint()
+  {
+    $order = $this->getOrder();
+    return array(
+      'submitted' => $order->dateCreated,
+      'content' => unserialize($order->content)
+    );
+  }
+
+  public function renderOrderContent($orderContent)
+  {
+    $orderData = unserialize($orderContent);
+    return craft()->paypalStandardPayments->renderOrderContent($orderData);
+  }
+
   /**
-   * Return a count of the stale Web Forms (older than 3 months)
+   * Return a count of the stale orders (older than 3 months)
    *
    **/
   public function getStaleOrdersCount($handle) {
@@ -123,9 +138,9 @@ class PaypalStandardPaymentsVariable
   }
 
   /**
-   * Return the list of unique Form Handles in the DB
+   * Return the list of unique handles in the DB
    *
-   * This is used to populate the form filter drop-down
+   * This is used to populate the filter drop-down
    *
    **/
   public function getHandles()

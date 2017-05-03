@@ -1,0 +1,47 @@
+.order-id {
+  color: #008080;
+  font-family: monospace;
+  font-size: 1.3em;
+}
+
+.fields {
+  float: left;
+  width: 58%;
+}
+
+.payment-details {
+  float: right;
+  width: 38%;
+}
+
+table.order {
+  width: 100%;
+}
+
+table.order th {
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  font-weight: bold;
+  padding: 8px 10px;
+  text-align: right;
+}
+
+table.order td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px 10px;
+}
+
+table.order td.amount {
+  text-align: right;
+}
+
+table.order td.section-heading {
+  background-color: #eee;
+  border-bottom: 2px solid #ddd;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.clear {
+  clear: both;
+}

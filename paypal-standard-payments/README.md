@@ -81,6 +81,22 @@ Javascript needs to be used to update the hidden **amount** form field that is u
 
 **Order ID** is generated when the form is submitted and it is returned by the AJAX request. It is then subsequently, through the `payment-order-title` class, used to update the item name that is submitted to Paypal to conclusively match the notification email and Paypal order.
 
+## Required Fields to Properly Store the Orders
+
+In order to store the **purchaser name** and **purchaser email** with the order, the order form needs to include the fields to collect this information. There are a couple of options to make this work.
+
+### Purchaser Name
+
+For the purchaser name to be collected properly, the form needs to include fields named as follows:
+
+`full_name` **OR** `first_name` and `last_name` (these 2 fields will be joinded to create the full name)
+
+### Purchaser Email
+
+For the purchase email to be collected properly, the form needs to include field names as follows:
+
+`email` **OR** `email_address`
+
 ## Offline Payment Option
 
 It is possible to generate the notification email but not submit the payment to Paypal.
@@ -116,41 +132,3 @@ Use the following information to login into the Paypal Sandbox account to review
 - **Login:** [Payapal Sandbox](https://www.sandbox.paypal.com)
 - **Email:** test-merchant@thenewline.com
 - **Password:** N4dN23kT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

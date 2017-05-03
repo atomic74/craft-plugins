@@ -41,7 +41,7 @@ class PaypalStandardPaymentsController extends BaseController
     $orderModel->subject = $subject;
     $orderModel->purchaserName = craft()->paypalStandardPayments->buildPurchaserName($fields);
     $orderModel->purchaserEmail = craft()->paypalStandardPayments->buildPurchaserEmail($fields);
-    $orderModel->content = craft()->paypalStandardPayments->renderEmailContent($orderData);
+    $orderModel->content = serialize($orderData);
 
     craft()->paypalStandardPayments->addOrder($orderModel);
 

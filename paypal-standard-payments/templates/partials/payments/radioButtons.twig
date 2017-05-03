@@ -1,0 +1,43 @@
+{#
+  {% include "partials/blocks/custom-form-fields/radioButtons" with {
+    inputName: 'input_name',
+    required: true,
+    label: 'Input Name',
+    options: [
+      {label: 'Label', value: 'value'},
+      {label: 'Label', value: 'value'}
+    ],
+    helpBlock: ''
+  } only %}
+#}
+<div class="form-group">
+  <h5>
+    {% if required %}
+      <span class="text-danger"><strong>*</strong></span>
+    {% endif %}
+    {{ label }}
+  </h5>
+  <div class="input">
+    <input type="hidden" name="fields[{{ inputName }}][label]" value="{{ label }}">
+    {% for option in options %}
+      <div class="radio">
+        <label>
+          <input
+            type="radio"
+            name="fields[{{ inputName }}][value][]"
+            data-amount="{{ option.value }}"
+            value="{{ option.label }}"
+            {% if loop.first and required %}
+              data-fv-notempty="true"
+              data-fv-notempty-message="Please select an option above."
+            {% endif %}
+          >
+          {{ option.label }}
+        </label>
+      </div>
+    {% endfor %}
+    {% if helpBlock is defined and helpBlock is not empty %}
+      <span class="help-block">{{ helpBlock }}</span>
+    {% endif %}
+  </div>
+</div>

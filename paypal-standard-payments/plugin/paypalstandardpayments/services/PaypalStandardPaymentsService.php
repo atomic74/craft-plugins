@@ -226,6 +226,11 @@ class PaypalStandardPaymentsService extends BaseApplicationComponent
     }
   }
 
+  public function renderOrderContent($orderData)
+  {
+    return $this->renderPluginTemplate('order-content', $orderData);
+  }
+
   public function renderEmailContent($orderData)
   {
     $formHandle = $orderData['formHandle'];

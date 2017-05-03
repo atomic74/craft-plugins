@@ -1,0 +1,59 @@
+<p class="order-id">Order ID: {{ orderId }}</p>
+<h2>{{ subject }}</h2>
+
+<hr>
+
+<div class="fields">
+  <table class="order">
+    <tbody>
+      {% for field in fields %}
+        {% if field.value is defined and field.value == "__section__" %}
+          <tr>
+            <td colspan="2" class="section-heading">{{ field.label }}</td>
+          </tr>
+        {% else %}
+          {% if field.value is defined and field.value is not empty %}
+            <tr>
+              <th>{{ field.label }}</th>
+              <td>
+                {% if field.value is not defined %}
+                  -- n/a --
+                {% else %}
+                  {% if field.value[0] is not defined and field.value is not empty %}
+                    {{ field.value }}
+                  {% else %}
+                    <ul>
+                      {% for option in field.value %}
+                        <li>{{ option }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="payment-details">
+  <table class="order">
+    <tr>
+      <td colspan="2" class="section-heading">
+        Payment Details
+      </td>
+    </tr>
+    {% for amount in amounts %}
+      <tr>
+        <th>{{ amount.label }}</th>
+        <td class="amount">${{ amount.value | number_format(2) }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="clear"></div>
+
+{% includeCssResource 'paypalstandardpayments/cp/orderContent.css' %}
