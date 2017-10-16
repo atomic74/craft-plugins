@@ -11,7 +11,7 @@ class WebFormPlugin extends BasePlugin
 
   public function getVersion()
   {
-    return '2.2.0';
+    return '2.3.0';
   }
 
   public function getDeveloper()
@@ -38,7 +38,8 @@ class WebFormPlugin extends BasePlugin
   {
     return array(
       'captchaTheme' => array(AttributeType::String, 'default' => 'light'),
-      'captchaSiteKey' => array(AttributeType::String, 'default' => 'PROVIDE_REAL_KEY')
+      'captchaSiteKey' => array(AttributeType::String, 'default' => 'PROVIDE_REAL_KEY'),
+      'captchaSecretKey' => array(AttributeType::String, 'default' => 'PROVIDE_REAL_KEY'),
     );
   }
 

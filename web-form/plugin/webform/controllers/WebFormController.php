@@ -17,7 +17,21 @@ class WebFormController extends BaseController
     $entry = craft()->entries->getEntryById($entry_id);
     $testMode = ($entry->testMode == 1) ? true : false;
     $saveInCms = ($entry->saveInCms == 1) ? true : false;
+    $captcha = ($entry->captcha == 1) ? true : false;
     $formHandle = $entry->formHandle;
+
+    // If captcha is enabled, verify that the request included the correct solution
+    if ($captcha) {
+      $gRecaptchaResponse = craft()->request->getPost('g-recaptcha-response');
+      $remoteIp = craft()->request->ipAddress;
+
+      if (!$this->validateCaptcha($gRecaptchaResponse, $remoteIp))
+      {
+        // Captcha verification failed!
+        header($_SERVER['SERVER_PROTOCOL'].' 418 I\'m a teapot');
+        exit;
+      }
+    }
 
     $recipients = $entry->notificationRecipients;
     $subject = $entry->notificationSubject;
@@ -132,5 +146,25 @@ class WebFormController extends BaseController
     {
       return UrlHelper::getCpUrl() . '/webform?formHandle=' . urlencode($formHandle);
     }
+  }
+
+  private function validateCaptcha($gRecaptchaResponse, $remoteIp) {
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $pluginSettings = craft()->plugins->getPlugin('webform')->getSettings();
+    $captchaSecretKey = $pluginSettings->captchaSecretKey;
+
+    $data = array(
+      "secret" => $captchaSecretKey,
+      "response" => $gRecaptchaResponse,
+      "remoteip" => $remoteIp
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = json_decode(curl_exec($ch));
+    return $response->success;
   }
 }

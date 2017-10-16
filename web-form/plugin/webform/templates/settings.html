@@ -13,6 +13,15 @@
   errors: (settings.captchaSiteKey is defined) ? settings.getErrors('captchaSiteKey') : ''
 }) }}
 
+{{ forms.textField({
+  label: "Captcha Secret Key"|t,
+  id: 'captchaSecretKey',
+  name: 'captchaSecretKey',
+  instructions: 'Input the Google reCaptcha **Secret key**.',
+  value: (settings.captchaSecretKey is defined) ? settings.captchaSecretKey : '',
+  errors: (settings.captchaSecretKey is defined) ? settings.getErrors('captchaSecretKey') : ''
+}) }}
+
 <div class="field" id="settings-captchaTheme-field">
   <div class="heading">
     <label id="settings-captchaTheme-label" for="settings-captchaTheme">Captcha Widget Color Theme</label>
