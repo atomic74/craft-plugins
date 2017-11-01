@@ -2,6 +2,8 @@
 
 This plugin allows to collect donation designations in a **Donations List** that works similar to a shopping cart.
 
+[Release Notes](https://github.com/ohlincik/craft-plugins/tree/master/grow-dough/docs/release-notes)
+
 ## Settings
 
 - **Donations URL:** Stores the full URL to the donations form for the account
@@ -57,7 +59,7 @@ Opening form tag to submit donation to GrowDough. Includes the GrowDough post UR
 #### Options
 
  - **templateVariables** Include the template variables that should be used in the GrowDough donation workflow (donation form, email receipt, thank you page, etc.) _If not included, an empty JSON array will be submitted._
- - **donationItems** Include an array of donation items to override the items in the donation list. _If not included, an array of donation items will be automatically generated from the donation list._ 
+ - **donationItems** Include an array of donation items to override the items in the donation list. _If not included, an array of donation items will be automatically generated from the donation list._
  - **paymentMethod** Include a predefined payment method (**credit\_card** or **giving_card**) if the form is intended to use a pre-determined GrowDough donation form.
 
 #### Most Common Use

@@ -27,7 +27,7 @@ class GrowDoughService extends BaseApplicationComponent
     $donationItems = $this->getDonationItems();
     if (array_key_exists($itemId, $donationItems) === false) {
       $donationItems[$itemId]['title'] = $itemTitle;
-      $donationItems[$itemId]['attributes'] = $itemAttributes;
+      $donationItems[$itemId]['attributes'] = json_decode($itemAttributes);
     }
     craft()->httpSession->add('growDoughItems', $donationItems);
   }

@@ -10,7 +10,7 @@ class GrowDoughPlugin extends BasePlugin
 
   function getVersion()
   {
-    return '1.0';
+    return '1.0.1';
   }
 
   function getDeveloper()
@@ -26,6 +26,11 @@ class GrowDoughPlugin extends BasePlugin
   public function getDocumentationUrl()
   {
     return "https://github.com/ohlincik/craft-plugins/tree/master/grow-dough";
+  }
+
+  public function getReleaseFeedUrl()
+  {
+    return 'https://tcg-craft.s3.amazonaws.com/plugins/grow-dough/releases.json';
   }
 
   protected function defineSettings()
