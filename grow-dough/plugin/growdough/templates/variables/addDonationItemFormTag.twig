@@ -1,0 +1,8 @@
+<form method="post" action="" accept-charset="UTF-8">
+  <input type="hidden" name="action" value="growDough/addDonationItem">
+  {%- if redirectUrl is not empty -%}
+    <input type="hidden" name="redirectUrl" value="{{ redirectUrl }}">
+  {%- endif -%}
+  <input type="hidden" name="itemId" value="{{ itemId }}">
+  <input type="hidden" name="itemTitle" value="{{ itemTitle|e }}">
+  <input type="hidden" name="itemAttributes" value="{{ itemAttributes|e }}">

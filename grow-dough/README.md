@@ -7,6 +7,7 @@ This plugin allows to collect donation designations in a **Donations List** that
 ## Settings
 
 - **Donations URL:** Stores the full URL to the donations form for the account
+- **Test Mode Enabled:** Allows to test the GrowDough integration with the Craft website. When enabled, the Test Mode is enabled during the checkout on GrowDough.
 
 ## Variables
 

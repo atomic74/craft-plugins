@@ -54,17 +54,16 @@ class GrowDoughVariable
      **/
     public function addDonationItemFormTag($itemId, $itemTitle, $itemAttributes = array(), $redirectUrl = "")
     {
-      $itemAttributesJson = json_encode($itemAttributes);
-      if ($redirectUrl) {
-        $redirectUrl = "<input type=\"hidden\" name=\"redirectUrl\" value=\"".$redirectUrl."\">";
-      }
-      return TemplateHelper::getRaw('
-  <form method="post" action="" accept-charset="UTF-8">
-    <input type="hidden" name="action" value="growDough/addDonationItem">
-    '.$redirectUrl.'
-    <input type="hidden" name="itemId" value="'.$itemId.'">
-    <input type="hidden" name="itemTitle" value="'.htmlspecialchars($itemTitle).'">
-    <input type="hidden" name="itemAttributes" value="'.htmlspecialchars($itemAttributesJson).'">');
+      $templateContents = array(
+        'redirectUrl' => $redirectUrl,
+        'itemId' => $itemId,
+        'itemTitle' => $itemTitle,
+        'itemAttributes' => json_encode($itemAttributes)
+      );
+
+      return TemplateHelper::getRaw(
+        craft()->growDough_helpers->renderPluginTemplate('variables/addDonationItemFormTag', $templateContents)
+      );
     }
 
   /**
@@ -117,16 +116,20 @@ class GrowDoughVariable
       $paymentMethod = "";
     }
     else {
-      $paymentMethod = "<input type=\"hidden\" id=\"growdough_payment_method\" name=\"payment_method\" value=\"".$options['paymentMethod']."\">";
+      $paymentMethod = $options['paymentMethod'];
     }
 
-    $templateVariables = json_encode($options['templateVariables']);
+    $templateContents = array(
+      'donationsUrl' => $this->donationsUrl(),
+      'testModeEnabled' => $this->testModeEnabled(),
+      'paymentMethod' => $paymentMethod,
+      'templateVariables' => json_encode($options['templateVariables']),
+      'donationItems' => $donationItems
+    );
 
-    return TemplateHelper::getRaw('
-<form role="form" id="growdough-form" method="post" action="'.$this->donationsUrl().'" accept-charset="UTF-8">
-  '.$paymentMethod.'
-  <input type="hidden" id="growdough_template_variables" name="template_variables" value="'.htmlspecialchars($templateVariables).'">
-  <input type="hidden" id="growdough_donation_items" name="donation_items" value="'.htmlspecialchars($donationItems).'">');
+    return TemplateHelper::getRaw(
+      craft()->growDough_helpers->renderPluginTemplate('variables/formTag', $templateContents)
+    );
   }
 
   /**
@@ -187,4 +190,14 @@ class GrowDoughVariable
     return str_replace('donate', 'giving_cards', $donationsUrl);
   }
 
+  /**
+   * Retrieve whether the GrowDough Test Mode setting is enabled.
+   *
+   * @return boolean True if Test Mode is enabled
+   **/
+  public function testModeEnabled()
+  {
+    $testModeEnabled = craft()->plugins->getPlugin('growDough')->getSettings()->testModeEnabled;
+    return ($testModeEnabled == '1') ? true : false;
+  }
 }

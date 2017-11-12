@@ -1,0 +1,7 @@
+<form role="form" id="growdough-form" method="post" action="{{ donationsUrl }}" accept-charset="UTF-8">
+  {%- if testModeEnabled -%}
+    <input type="hidden" id="growdough_test_mode" name="test_mode" value="true">
+  {%- endif -%}
+  <input type="hidden" id="growdough_payment_method" name="payment_method" value="{{ paymentMethod }}">
+  <input type="hidden" id="growdough_template_variables" name="template_variables" value="{{ templateVariables|e }}">
+  <input type="hidden" id="growdough_donation_items" name="donation_items" value="{{ donationItems|e }}">

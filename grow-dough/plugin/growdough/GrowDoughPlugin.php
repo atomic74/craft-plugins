@@ -10,7 +10,7 @@ class GrowDoughPlugin extends BasePlugin
 
   function getVersion()
   {
-    return '1.0.1';
+    return '1.1.0';
   }
 
   function getDeveloper()
@@ -36,7 +36,8 @@ class GrowDoughPlugin extends BasePlugin
   protected function defineSettings()
   {
     return array(
-      'growDoughDonationsUrl' => array(AttributeType::String, 'default' => '')
+      'growDoughDonationsUrl' => array(AttributeType::String, 'default' => ''),
+      'testModeEnabled' => array(AttributeType::Bool, 'default' => true)
     );
   }
 

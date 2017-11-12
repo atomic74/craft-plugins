@@ -1,0 +1,68 @@
+{% import "_includes/forms" as forms %}
+
+<div class="grid first">
+  <div class="item" data-position="left" data-min-colspan="2">
+    <div class="pane">
+      {{ forms.textField({
+        label: "Donations URL"|t,
+        id: 'growDoughDonationsUrl',
+        name: 'growDoughDonationsUrl',
+        instructions: 'Provide the **full** GrowDough donation URL.',
+        placeholder: 'https://secure.growdough.org/donate/{slug}',
+        value: (settings.growDoughDonationsUrl is defined) ? settings.growDoughDonationsUrl : '',
+        errors: (settings.growDoughDonationsUrl is defined) ? settings.getErrors('growDoughDonationsUrl') : ''
+      }) }}
+    </div>
+  </div>
+  <div class="item" data-position="right" data-min-colspan="1">
+    <div class="pane help-pane">
+      <dl>
+        <dt>Live</dt>
+        <dd>https://secure.growdough.org/donate/{slug}</dd>
+        <dt>Beta</dt>
+        <dd>https://beta.growdough.org/donate/{slug}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="item">
+    <div class="pane">
+      {{ forms.lightswitchField({
+        label: "Test Mode Enabled"|t,
+        id: 'testModeEnabled',
+        name: 'testModeEnabled',
+        instructions: "When enabled (green) the **Test Mode** will be enabled during checkout. This allows you to test the integration with GrowDough. The payments will be processed using the **Test Payments Gateway** and all the email confirmations and notifications will be sent to the **Test Email Recipient**."|t,
+        value: settings.testModeEnabled,
+        on: (settings.testModeEnabled is defined) ? settings.testModeEnabled : ""
+      }) }}
+    </div>
+  </div>
+</div>
+
+{% set myCss %}
+  .help-pane {
+    background-color: #f5f5f5;
+    color: #666;
+    padding: 1em;
+    white-space: nowrap;
+  }
+
+  dt {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  dd {
+    color: #999;
+    margin-bottom: 1em;
+  }
+
+  dd:last-child {
+    margin-bottom: 0;
+  }
+}
+{% endset %}
+
+{% includeCss myCss %}
