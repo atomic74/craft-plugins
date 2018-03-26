@@ -1,0 +1,30 @@
+{#
+  {% include "_plugins/webform/blocks/form-fields/formSection" with {
+    sectionTitle: 'title',
+    showDivider: true
+  } only %}
+#}
+{% if matrixBlock.sectionTitle is defined %}
+  {% set inputName = matrixBlock.inputName %}
+  {% set sectionTitle = matrixBlock.sectionTitle %}
+  {% set showDivider = matrixBlock.showDivider %}
+  {% set description = matrixBlock.description %}
+{% else %}
+  {% set inputName = sectionTitle|replace(' ', '_')|lower %}
+{% endif %}
+<input type="hidden" name="fields[{{ inputName }}][label]" value="{{ sectionTitle }}">
+<input type="hidden" name="fields[{{ inputName }}][value]" value="__section__">
+
+
+{% if showDivider is defined and showDivider %}
+  <hr>
+{% endif %}
+
+<div class="form-section">
+  <input type="hidden" name="fields[{{ inputName }}][label]" value="{{ sectionTitle }}">
+  <input type="hidden" name="fields[{{ inputName }}][value]" value="__section__">
+  <h3>{{ sectionTitle }}</h3>
+  {% if description is defined and description is not empty %}
+    {{ description }}
+  {% endif %}
+</div>

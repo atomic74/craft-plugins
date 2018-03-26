@@ -1,0 +1,9 @@
+{#
+  {% include "_plugins/webform/blocks/form-fields/hidden" with {
+    label: 'Input Name',
+    value: 'value'
+  } only %}
+#}
+{% set inputName = label|replace(' ', '_')|lower %}
+<input type="hidden" name="fields[{{ inputName }}][label]" value="{{ label }}">
+<input type="hidden" name="fields[{{ inputName }}][value]" value="{{ value }}">

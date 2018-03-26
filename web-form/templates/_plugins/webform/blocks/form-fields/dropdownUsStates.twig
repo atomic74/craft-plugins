@@ -1,25 +1,43 @@
+{#
+  {% include "_plugins/webform/blocks/form-fields/dropdownUsStates" with {
+    inputName: 'inputName',
+    required: true,
+    label: 'Input Name',
+    promptOption: '',
+    helpBlock: ''
+  } only %}
+#}
+{% if matrixBlock.inputName is defined %}
+  {% set inputName = matrixBlock.inputName %}
+  {% set required = matrixBlock.required %}
+  {% set label = matrixBlock.label %}
+  {% set promptOption = matrixBlock.promptOption %}
+  {% set helpBlock = matrixBlock.helpBlock %}
+{% endif %}
 <div class="form-group">
-  <label class="control-label" for="fields_{{ matrixBlock.inputName }}">
-    {% if matrixBlock.required %}
+  <label class="control-label" for="fields_{{ inputName }}">
+    {% if required %}
       <span class="text-danger"><strong>*</strong></span>
     {% endif %}
-    {{ matrixBlock.label }}
+    {{ label }}
   </label>
   <div class="input">
-    <input type="hidden" name="fields[{{ matrixBlock.inputName }}][label]" value="{{ matrixBlock.label }}">
+    <input type="hidden" name="fields[{{ inputName }}][label]" value="{{ label }}">
     <select
       class="form-control"
-      id="fields_{{ matrixBlock.inputName }}"
-      name="fields[{{ matrixBlock.inputName }}][value]"
-      {% if matrixBlock.required %}
+      id="fields_{{ inputName }}"
+      name="fields[{{ inputName }}][value]"
+      {% if required %}
         data-fv-notempty="true"
         data-fv-notempty-message="Please select an option above."
       {% endif %}
     >
-      {% if matrixBlock.required %}
-        <option value="">{{ matrixBlock.promptOption | default('Please select one...') }}</option>
-      {% elseif matrixBlock.promptOption is not empty %}
-        <option value="-- n/a --">{{ matrixBlock.promptOption }}</option>
+      {% if promptOption is defined %}
+        {% if required %}
+          <option value="">{{ promptOption|default('Please select one...') }}</option>
+        {% elseif promptOption is not empty %}
+          <option value="-- n/a --">{{ promptOption }}</option>
+        {% endif %}
       {% endif %}
       <option value="AL">Alabama</option>
       <option value="AK">Alaska</option>
@@ -74,8 +92,8 @@
       <option value="WI">Wisconsin</option>
       <option value="WY">Wyoming</option>
     </select>
-    {% if matrixBlock.helpBlock is not empty %}
-      <span class="help-block">{{ matrixBlock.helpBlock }}</span>
+    {% if helpBlock is defined and helpBlock is not empty %}
+      <span class="help-block">{{ helpBlock }}</span>
     {% endif %}
   </div>
 </div>

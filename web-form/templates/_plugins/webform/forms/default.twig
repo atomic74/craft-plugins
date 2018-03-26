@@ -1,5 +1,5 @@
 {# Import the form helper macros #}
-{% import 'partials/macros/form-helpers' as fh %}
+{% import '_plugins/webform/macros/form-helpers' as fh %}
 
 {# This generates the form tag that will submit the form to the custom plugin. #}
 {# <form role="form" id="submission-form" method="post" ... #}
@@ -7,37 +7,13 @@
   'entryId': entry.id
 }) }}
 
-  <div class="row">
-    <div class="col-sm-12">
-      {{ fh.formField(entry, 'section_contact_info') }}
-    </div>
-  </div>
+  {% if entry.formFields %}
+    {% for matrixBlock in entry.formFields %}
+      {{ fh.defaultFormField(entry, matrixBlock.inputName) }}
+    {% endfor %}
+  {% endif %}
 
-  <div class="row">
-    <div class="col-sm-6">
-      {{ fh.formField(entry, 'first_name') }}
-    </div>
-    <div class="col-sm-6">
-      {{ fh.formField(entry, 'last_name') }}
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-sm-12">
-      {{ fh.formField(entry, 'address_street') }}
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-sm-4">{{ fh.formField(entry, 'address_city') }}</div>
-    <div class="col-sm-4">{{ fh.formField(entry, 'address_state') }}</div>
-    <div class="col-sm-4">{{ fh.formField(entry, 'address_zip') }}</div>
-  </div>
-
-  <div class="row">
-    <div class="col-sm-6">{{ fh.formField(entry, 'interested_in') }}</div>
-    <div class="col-sm-6">{{ fh.formField(entry, 'contact_reference') }}</div>
-  </div>
+{# ========== Form footer with optional Captcha and submit button ========== #}
 
   <hr>
 
@@ -51,17 +27,17 @@
   {% endif %}
 
   <div class="submit">
-    <input type="submit" class="btn btn-primary" value="{{ entry.submitButtonLabel | default('Submit') }}">
+    <button class="btn-new" type="submit">{{ entry.submitButtonLabel|default('Submit') }}</button>
   </div>
 
 </form>
 
 <div id="processing-submission" style="display:none;margin:100px auto;text-align:center;">
-  <p><img src="http://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
+  <p><img src="https://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
   <p>Processing your form submission, please wait...</p>
 </div>
 
-{# ================= Include the form validation code =================== #}
+{# ==================== Include the form validation code =================== #}
 
 {% includeCssResource 'webform/css/formValidation.min.css' %}
 {% includeJsResource 'webform/js/formValidation.min.js' %}

@@ -1,0 +1,48 @@
+{% extends "_layouts/base" %}
+{% set uri = entry.uri %}
+{% set showSidebar = entry.bcHideSidebar != 1 %}
+{% set pageLayoutTemplate = showSidebar ? 'default' : 'narrow' %}
+{% set pageHeading = entry.bcPageHeading is not empty ? entry.bcPageHeading : entry.title %}
+
+{% block pageLayout %}
+  {% embed '_layouts/page/' ~ pageLayoutTemplate %}
+    {% block contentLayout %}
+      {% embed '_layouts/content/default' %}
+        {% block mainContent %}
+          <h1>{{ pageHeading }}</h1>
+          {% if craft.request.getParam('success') != '✓' %}
+
+            {% if entry.mainContent %}
+              {% for matrixBlock in entry.mainContent.level(1) %}
+                {% set include_type = '_partials/blocks/main-content/' ~ matrixBlock.type %}
+                {% include include_type with {'block': matrixBlock} only %}
+              {% endfor %}
+            {% endif %}
+
+            <hr>
+
+            <p>Fields marked with <span class="text-danger"><strong>*</strong></span> are required.</p>
+
+            {# Javascript must be endabled. Otherwise the form is hidden and message to enable Javascipt is displayed. #}
+            <noscript>
+              <style type="text/css">
+                  #submission-form {display:none;}
+              </style>
+              <p class="bg-danger" style="padding:10px;display:block;">
+              You don't have javascript enabled. To continue, please enable your javascript. See instructions <a href="http://enable-javascript.com/" target="_blank">here</a>.</p>
+            </noscript>
+
+            {# Include the custom formatted form if exists otherwise just render the default template #}
+            {% include ['_plugins/webform/forms/' ~ entry.formHandle, '_plugins/webform/forms/default'] %}
+
+          {% else %}
+
+            {# The form has been successfully submitted, render the success content #}
+            {{ entry.successContent }}
+
+          {% endif %}
+        {% endblock %}
+      {% endembed %}
+    {% endblock %}
+  {% endembed %}
+{% endblock %}

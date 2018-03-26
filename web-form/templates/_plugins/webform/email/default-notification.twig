@@ -1,0 +1,22 @@
+{# Import the email helper macros #}
+{% import '_plugins/webform/macros/email-helpers' as eh %}
+
+{% extends '_layouts/email' %}
+
+{% block subject %}
+  {{ subject }}
+{% endblock %}
+
+{% block body %}
+  {% for field in fields %}
+    {% if field.value is defined and field.value == "__section__" %}
+      <p>&nbsp;</p>
+      <h2>{{ eh.formFieldLabel(field) }}</h2>
+    {% else %}
+      <p>
+        <strong>{{ eh.formFieldLabel(field) }}:</strong>
+        {{ eh.formFieldValue(field) }}
+      </p>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

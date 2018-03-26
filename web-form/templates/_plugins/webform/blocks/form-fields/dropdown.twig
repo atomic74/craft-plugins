@@ -1,0 +1,55 @@
+{#
+  {% include "_plugins/webform/blocks/form-fields/dropdown" with {
+    inputName: 'inputName',
+    required: true,
+    label: 'Input Name',
+    promptOption: '',
+    options: [
+      {label: 'Label', value: 'value'},
+      {label: 'Label', value: 'value'}
+    ],
+    helpBlock: ''
+  } only %}
+#}
+{% if matrixBlock.inputName is defined %}
+  {% set inputName = matrixBlock.inputName %}
+  {% set required = matrixBlock.required %}
+  {% set label = matrixBlock.label %}
+  {% set promptOption = matrixBlock.promptOption %}
+  {% set options = matrixBlock.options %}
+  {% set helpBlock = matrixBlock.helpBlock %}
+{% endif %}
+<div class="form-group">
+  <label class="control-label" for="fields_{{ inputName }}">
+    {% if required %}
+      <span class="text-danger"><strong>*</strong></span>
+    {% endif %}
+    {{ label }}
+  </label>
+  <div class="input">
+    <input type="hidden" name="fields[{{ inputName }}][label]" value="{{ label }}">
+    <select
+      class="form-control"
+      id="fields_{{ inputName }}"
+      name="fields[{{ inputName }}][value]"
+      {% if required %}
+        data-fv-notempty="true"
+        data-fv-notempty-message="Please select an option above."
+      {% endif %}
+    >
+      {% if promptOption is defined %}
+        {% if required %}
+          <option value="">{{ promptOption|default('Please select one...') }}</option>
+        {% elseif promptOption is not empty %}
+          <option value="-- n/a --">{{ promptOption }}</option>
+        {% endif %}
+      {% endif %}
+      {% for option in options %}
+        <option value="{{ option.value|default(option.label) }}">{{ option.label }}</option>
+      {% endfor %}
+    </select>
+    {% if helpBlock is defined and helpBlock is not empty %}
+      <span class="help-block">{{ helpBlock }}</span>
+    {% endif %}
+  </div>
+</div>

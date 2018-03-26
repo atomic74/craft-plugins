@@ -1,0 +1,208 @@
+{# Import the form helper macros #}
+{% import '_plugins/webform/macros/form-helpers' as fh %}
+
+{# This generates the form tag that will submit the form to the custom plugin. #}
+{# <form role="form" id="submission-form" method="post" ... #}
+{{ craft.webForm.formTag({
+  'entryId': entry.id
+}) }}
+
+{#
+  -----------------------------------------------------------------------------
+  Create a custom layout for fields configured through the Web Form entry type
+  -----------------------------------------------------------------------------
+#}
+
+  <div class="row">
+    <div class="col-sm-12">
+      {{ fh.formField(entry, 'section_contact_info') }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      {{ fh.formField(entry, 'first_name') }}
+    </div>
+    <div class="col-sm-6">
+      {{ fh.formField(entry, 'last_name') }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      {{ fh.formField(entry, 'address_street') }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-4">{{ fh.formField(entry, 'address_city') }}</div>
+    <div class="col-sm-4">{{ fh.formField(entry, 'address_state') }}</div>
+    <div class="col-sm-4">{{ fh.formField(entry, 'address_zip') }}</div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">{{ fh.formField(entry, 'interested_in') }}</div>
+    <div class="col-sm-6">{{ fh.formField(entry, 'contact_reference') }}</div>
+  </div>
+
+{#
+  -----------------------------------------------------------------------------
+  Provide the fields content manually using the form-fields blocks
+
+  Reference the available macros and block templates here:
+    craft/templates/_partials/macros/form-helpers.twig
+  -----------------------------------------------------------------------------
+#}
+
+  <div class="row">
+    <div class="col-sm-12">
+      {{ fh.formSection({
+        sectionTitle: 'Your Contact Info',
+        showDivider: false
+      }) }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      {{ fh.textbox({
+        inputName: 'first_name',
+        required: true,
+        label: 'First Name',
+        placeholder: 'Please enter your first name...',
+        helpBlock: ''
+      }) }}
+    </div>
+    <div class="col-sm-6">
+      {{ fh.textbox({
+        inputName: 'last_name',
+        required: true,
+        label: 'Last Name',
+        placeholder: 'Please enter your last name...',
+        helpBlock: ''
+      }) }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      {{ fh.textbox({
+        inputName: 'address_street',
+        required: true,
+        label: 'Street Address',
+        placeholder: '',
+        helpBlock: 'Your full street address including the house number'
+      }) }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-4">
+      {{ fh.textbox({
+        inputName: 'address_city',
+        required: true,
+        label: 'City',
+      }) }}
+    </div>
+    <div class="col-sm-4">
+      {{ fh.dropdownUsStates({
+        inputName: 'address_state',
+        required: true,
+        label: 'State',
+        promptOption: 'Select a state...'
+      }) }}
+    </div>
+    <div class="col-sm-4">
+      {{ fh.textbox({
+        inputName: 'address_zip',
+        required: true,
+        label: 'Zip Code',
+      }) }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      {{ fh.formField(entry, 'interested_in') }}
+      {{ fh.dropdown({
+        inputName: 'interested_in',
+        required: true,
+        label: 'What are you interested in?',
+        promptOption: 'Please select your interest...',
+        options: [
+          {label: 'Nothing', value: 'I have no interests'},
+          {label: 'Something', value: 'I hae some interests'},
+          {label: 'Everything'}
+        ],
+        helpBlock: 'This helps us to understand you better.'
+      }) }}
+    </div>
+    <div class="col-sm-6">
+      {{ fh.checkboxes({
+        inputName: 'contact_reference',
+        required: true,
+        label: 'How can we contact you?',
+        options: [
+          {label: 'Home Phone'},
+          {label: 'Mobile Phone'},
+          {label: 'Text Message'},
+          {label: 'Email'},
+          {label: 'Facebook'},
+          {label: 'Twitter'}
+        ],
+        helpBlock: 'Select all that apply'
+      }) }}
+    </div>
+  </div>
+
+{# ========== Form footer with optional Captcha and submit button ========== #}
+
+  <hr>
+
+  {% if entry.captcha %}
+    <div class="form-group">
+      <label class="control-label">Please verify that a real person is submitting this form</label>
+      {# The captcha container #}
+      <div id="captchaContainer"></div>
+      <p class="help-block">The checkbox above helps us decrease spam form submissions.</p>
+    </div>
+  {% endif %}
+
+  <div class="submit">
+    <button class="btn-new btn-default" type="submit">{{ entry.submitButtonLabel|default('Submit') }}</button>
+  </div>
+
+</form>
+
+<div id="processing-submission" style="display:none;margin:100px auto;text-align:center;">
+  <p><img src="https://nlc-helpers.s3.amazonaws.com/loadingAnimation.gif" alt="Processing..." /></p>
+  <p>Processing your form submission, please wait...</p>
+</div>
+
+{# ==================== Include the form validation code =================== #}
+
+{% includeCssResource 'webform/css/formValidation.min.css' %}
+{% includeJsResource 'webform/js/formValidation.min.js' %}
+{% includeJsResource 'webform/js/bootstrapFormValidation.min.js' %}
+{% if entry.captcha %}
+  {% includeJsResource 'webform/js/reCaptcha2.min.js' %}
+{% endif %}
+
+{% set validationJs %}
+$(document).ready(function() {
+  $('#submission-form input[type=submit]').click(function() {
+    $('#submission-form').data('formValidation').resetForm();
+  });
+  $('#submission-form').formValidation({
+    framework: 'bootstrap',
+    live: 'disabled',
+    autoFocus: false
+  })
+  .on('success.form.fv', function(e) {
+    $('#processing-submission').show();
+    $('#submission-form').hide();
+  });
+});
+{% endset %}
+
+{% includeJs validationJs %}

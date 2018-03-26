@@ -7,7 +7,7 @@ class WebFormController extends BaseController
 
   public function actionSendNotification()
   {
-    $template_dir = 'email/';
+    $template_dir = '_plugins/webform/email/';
     $default_template = $template_dir.'default-notification';
 
     $this->requirePostRequest();
